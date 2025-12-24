@@ -13,3 +13,14 @@ export async function getHeroData() {
 		return null;
 	}
 }
+export async function getAboutData() {
+	noStore(); // Ensures data isn't cached statically
+	try {
+		return await db.aboutSection?.findFirst({
+			include: { corePillars: true, statuses: true },
+		});
+	} catch (error) {
+		console.error("Fetch Error:", error);
+		return null;
+	}
+}

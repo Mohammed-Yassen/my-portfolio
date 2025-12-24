@@ -41,6 +41,9 @@ export function Sidebar() {
 	const pathname = usePathname();
 
 	useEffect(() => setMounted(true), []);
+	if (!mounted) {
+		return null;
+	}
 
 	const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
 		<div className={cn("space-y-1.5", isMobile ? "mt-10" : "px-4 flex-1")}>

@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeroData } from "@/type/index";
+
 import { cn } from "@/lib/utils";
+import { HeroSection as Hero } from "@prisma/client";
 
 interface HeroSectionProps {
-	data: Partial<HeroData>;
+	data: Hero | null;
 }
 
 // 1. Define status configurations outside for performance
@@ -63,9 +64,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 				(data?.status?.toUpperCase() as keyof typeof STATUS_CONFIG) ||
 				"DEFAULT",
 			image: data?.primaryImage || "/p4.png",
-			email: data?.email || "moyaseen5100@gmail.com",
-			github: data?.socialLinks?.github || "#",
-			linkedin: data?.socialLinks?.linkedin || "#",
+
 			resumeUrl: data?.resumeUrl,
 		}),
 		[data],
@@ -107,7 +106,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 	return (
 		<section
 			id='hero'
-			className='relative w-full min-h-screen flex items-center bg-background overflow-hidden py-16 md:py-24'>
+			className='relative w-full min-h-screen flex items-center  overflow-hidden py-16 md:py-24'>
 			{/* Background Ambient Glow */}
 			<div className='absolute inset-0 pointer-events-none'>
 				<motion.div
@@ -200,17 +199,11 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 
 						{/* Social Links */}
 						<div className='flex justify-center lg:justify-start items-center gap-6 pt-8 border-t border-border w-fit mx-auto lg:mx-0'>
-							<SocialLink
-								href={profile.github}
-								icon={<Github className='h-5 w-5' />}
-							/>
-							<SocialLink
-								href={profile.linkedin}
-								icon={<Linkedin className='h-5 w-5' />}
-							/>
+							<SocialLink href={"#"} icon={<Github className='h-5 w-5' />} />
+							<SocialLink href={"#"} icon={<Linkedin className='h-5 w-5' />} />
 							<div className='h-6 w-px bg-border mx-2' />
 							<a
-								href={`mailto:${profile.email}`}
+								// href={`mailto:${profile.email}`}
 								className='text-sm font-bold hover:text-primary flex items-center gap-2 transition-colors'>
 								<Mail className='h-5 w-5' /> Let&apos;s Talk
 							</a>

@@ -1,128 +1,18 @@
 generator client {
-  // provider = "prisma-client"
   provider        = "prisma-client-js"
-  // output          = "../generated/prisma"
   previewFeatures = ["driverAdapters"]
 }
 
-// generator client {
-//   // REMOVE the custom output line or set it to default
-//   // output = "./generated/prisma" <--- DELETE THIS
 datasource db {
   provider = "postgresql"
 }
 
-// prisma/schema.prisma
-
-// -----------------------------------------
-// 1. IDENTITY & HERO (The "Command Center" Core)
-// -----------------------------------------
-
-// prisma/schema.prisma
+// --- ENUMS ---
 
 enum Availability {
-  AVAILABLE // Option 1
-  BUSY // Option 2
-  OPEN_FOR_COMMISSION // Option 3
-}
-
-model HeroSection {
-  id              String       @id @default("hero-static")
-  status          Availability @default(AVAILABLE) // Changed from String
-  greeting        String       @default("Hi, I am")
-  name            String       @default("Mohammed Yaseen")
-  role            String       @default("Full-Stack Developer & AI Researcher")
-  description     String       @db.Text
-  primaryImage    String
-  secondaryImages String[]
-  resumeUrl       String?
-  ctaText         String       @default("Start a Project")
-  githubUrl       String?
-  linkedinUrl     String?
-  updatedAt       DateTime     @updatedAt
-}
-
-model AboutSection {
-  id            String @id @default(cuid())
-  title         String @default("A Hybrid Approach to Problem Solving")
-  subtitle      String @default("My background in Security Research...")
-  description   String @db.Text
-  yearsExp      Int    @default(3)
-  projectsCount Int    @default(20)
-
-  // Highlights as a Json array or separate model
-  highlights  Json? // Stores: [{ title: string, desc: string, icon: string }]
-  corePillars CorePillars[]
-
-  updatedAt DateTime @updatedAt
-}
-
-model CorePillars {
-  id             String       @id @default(cuid())
-  title          String
-  description    String       @db.Text
-  icon           String // Lucide icon name or path
-  aboutSectionId String       @map("aboutSectionId")
-  aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id])
-  updatedAt      DateTime     @updatedAt
-}
-
-// -----------------------------------------
-// 2. WORK & PORTFOLIO
-// -----------------------------------------
-
-model Project {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  description String   @db.Text
-  content     String?  @db.Text // Full case study/markdown content
-  coverImage  String // Main preview image
-  gallery     String[] // Additional project screenshots
-  category    String // e.g., "Web Engineering", "Data Science"
-  liveUrl     String?
-  repoUrl     String?
-  isFeatured  Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  publishedAt DateTime @default(now())
-  isPublished Boolean  @default(false)
-  isAvailable Boolean  @default(true)
-
-  // Relation to Skills (Tags)
-  skills Skill[] @relation("ProjectToSkill")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// -----------------------------------------
-// 3. TECHNICAL STACK
-// -----------------------------------------
-
-model Skill {
-  id       String @id @default(cuid())
-  name     String @unique
-  category String // e.g., "Frontend", "Backend", "Tools"
-  icon     String // Icon name (Lucide) or SVG path
-  level    Int    @default(90) // Progress bar percentage
-
-  // Relation back to Projects
-  projects Project[] @relation("ProjectToSkill")
-}
-
-// -----------------------------------------
-// 4. CLIENT INTERACTION (The Inbox)
-// -----------------------------------------
-
-model ContactMessage {
-  id        String        @id @default(cuid())
-  name      String
-  email     String
-  subject   String?
-  message   String        @db.Text
-  status    MessageStatus @default(UNREAD)
-  ipAddress String? // For spam protection
-  createdAt DateTime      @default(now())
+  AVAILABLE
+  BUSY
+  OPEN_FOR_COMMISSION
 }
 
 enum MessageStatus {
@@ -133,13 +23,150 @@ enum MessageStatus {
 }
 
 // -----------------------------------------
-// 5. TESTIMONIALS & CREDENTIALS
+// 1. IDENTITY & OWNER (The Core)
+// -----------------------------------------
+
+model User {
+  id      String   @id @default(cuid())
+  name    String?
+  email   String?  @unique
+  phone   String? // User-level phone field
+  image   String?
+  profile Profile?
+}
+
+model Profile {
+  id     String @id @default("owner-static")
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Direct Contact Info
+  email    String  @default("contact@example.com")
+  phone    String? // Primary professional phone
+  location String? @default("Remote / Yemen")
+
+  // Relations
+  contactMe ContactMe?
+  updatedAt DateTime   @updatedAt
+}
+
+model ContactMe {
+  id        String  @id @default(cuid())
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  // Social Channels & Handles
+  githubUrl   String?
+  linkedinUrl String?
+  xUrl        String? // X (formerly Twitter)
+  whatsapp    String?
+  facebook    String?
+  tiktok      String?
+  figma       String?
+
+  updatedAt DateTime @updatedAt
+}
+
+// -----------------------------------------
+// 2. HERO & ABOUT (The Narrative)
+// -----------------------------------------
+
+model HeroSection {
+  id              String       @id @default("hero-static")
+  status          Availability @default(AVAILABLE)
+  greeting        String       @default("Hi, I am")
+  name            String       @default("Mohammed Yaseen")
+  role            String       @default("Full-Stack Developer & AI Researcher")
+  description     String       @db.Text
+  primaryImage    String
+  secondaryImages String[]
+  resumeUrl       String?
+  ctaText         String       @default("Start a Project")
+  updatedAt       DateTime     @updatedAt
+}
+
+model AboutSection {
+  id          String @id @default("about-static")
+  title       String @default("A Hybrid Approach to Problem Solving")
+  subtitle    String @default("My background in Security Research...")
+  description String @db.Text
+
+  corePillars CorePillars[]
+  statuses    AboutStatus[]
+  updatedAt   DateTime      @updatedAt
+}
+
+model AboutStatus {
+  id             String       @id @default(cuid())
+  label          String // e.g., "Years Exp."
+  value          String // e.g., "3+"
+  isActive       Boolean      @default(true)
+  aboutSectionId String
+  aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime     @updatedAt
+}
+
+model CorePillars {
+  id             String       @id @default(cuid())
+  title          String
+  description    String       @db.Text
+  icon           String // Lucide icon name
+  aboutSectionId String
+  aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime     @updatedAt
+}
+
+// -----------------------------------------
+// 3. WORK, SKILLS & MESSAGES
+// -----------------------------------------
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  content     String?  @db.Text
+  coverImage  String
+  gallery     String[]
+  category    String
+  liveUrl     String?
+  repoUrl     String?
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  isPublished Boolean  @default(false)
+  skills      Skill[]  @relation("ProjectToSkill")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  category String
+  icon     String
+  level    Int       @default(90)
+  projects Project[] @relation("ProjectToSkill")
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String        @db.Text
+  status    MessageStatus @default(UNREAD)
+  ipAddress String?
+  createdAt DateTime      @default(now())
+}
+
+// -----------------------------------------
+// 4. CREDENTIALS & CONFIG
 // -----------------------------------------
 
 model Testimonial {
   id        String   @id @default(cuid())
   name      String
-  role      String // e.g., "Product Manager @ Solar"
+  role      String
   avatar    String
   content   String   @db.Text
   isActive  Boolean  @default(true)
@@ -149,16 +176,11 @@ model Testimonial {
 model Certification {
   id           String  @id @default(cuid())
   title        String
-  issuer       String // e.g., "AWS", "Google"
+  issuer       String
   issueDate    String
   credentialId String?
   link         String?
-  icon         String? // Logo of the issuer
 }
-
-// -----------------------------------------
-// 6. ANALYTICS & CONFIG (Global Settings)
-// -----------------------------------------
 
 model SiteConfig {
   id              String   @id @default("config-static")
@@ -167,6 +189,5 @@ model SiteConfig {
   profileViews    Int      @default(0)
   enableBlog      Boolean  @default(true)
   metaDescription String?
-  ogImage         String?
   updatedAt       DateTime @updatedAt
 }

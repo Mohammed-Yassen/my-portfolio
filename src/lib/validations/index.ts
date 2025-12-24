@@ -1,5 +1,6 @@
 /** @format */
 
+import { stat } from "fs";
 import * as z from "zod";
 
 export const AvailabilityEnum = z.enum([
@@ -7,6 +8,17 @@ export const AvailabilityEnum = z.enum([
 	"BUSY",
 	"OPEN_FOR_COMMISSION",
 ]);
+export const heroSchema = z.object({
+	status: AvailabilityEnum,
+	greeting: z.string().min(1),
+	name: z.string().min(1),
+	role: z.string().min(1),
+	description: z.string().min(1),
+	primaryImage: z.string().min(1),
+	secondaryImages: z.array(z.string()).default([]),
+	resumeUrl: z.string().nullable().optional(),
+	ctaText: z.string().default("Start a Project"),
+});
 
 const corePillarSchema = z.object({
 	id: z.string().optional(),
@@ -14,6 +26,24 @@ const corePillarSchema = z.object({
 	description: z.string().min(5, "Pillar description required"),
 	icon: z.string().min(1, "Icon name required"),
 });
+const aboutStatusSchema = z.object({
+	id: z.string().optional(),
+	label: z.string().min(1, "Status label required"),
+	value: z.string().min(1, "Status value required"),
+	isActive: z.boolean().default(true),
+});
+export const aboutSchema = z.object({
+	title: z.string().min(2),
+	subtitle: z.string().min(2),
+	description: z.string().min(10),
+
+	corePillars: z.array(corePillarSchema).min(1),
+	statuses: z.array(aboutStatusSchema).min(1),
+});
+
+export type HeroFormValues = z.infer<typeof heroSchema>;
+export type CorePillarFormValues = z.infer<typeof corePillarSchema>;
+export type AboutFormSchema = z.infer<typeof aboutSchema>;
 
 export const identitySchema = z.object({
 	hero: z.object({
