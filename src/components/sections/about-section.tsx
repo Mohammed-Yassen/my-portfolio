@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
 	Plus,
 	ArrowUpRight,
@@ -12,155 +12,158 @@ import {
 	Zap,
 	Sparkles,
 	Cpu,
+	LucideIcon,
 } from "lucide-react";
-import { AboutWithRelations } from "@/type";
 import { cn } from "@/lib/utils";
+import { FullAboutSection } from "@/type";
 
-// Mapping icons to match your Zod Schema and Hero aesthetic
-const ICON_MAP: Record<string, React.ElementType> = {
-	Terminal: Terminal,
-	Layers: Layers,
-	ShieldCheck: ShieldCheck,
-	Zap: Zap,
-	Sparkles: Sparkles,
-	Cpu: Cpu,
+// Expanded Icon Map to support dynamic selection from IconPicker
+const ICON_MAP: Record<string, LucideIcon> = {
+	Terminal,
+	Layers,
+	ShieldCheck,
+	Zap,
+	Sparkles,
+	Cpu,
 };
-
-export const AboutSection = ({ data }: { data: AboutWithRelations | null }) => {
+interface AboutSectionFieldsProps {
+	aboutData: FullAboutSection | null;
+}
+export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 	const sectionRef = useRef<HTMLElement>(null);
 
+	// Scroll progress for subtle parallax on the right-hand cards
 	const { scrollYProgress } = useScroll({
 		target: sectionRef,
 		offset: ["start end", "end start"],
 	});
 
-	const rotate = useTransform(scrollYProgress, [0, 1], [1, -1]);
+	const yParallax = useTransform(scrollYProgress, [0, 1], [0, -50]);
+	const rotateParallax = useTransform(scrollYProgress, [0, 1], [2, -2]);
 
-	const title = data?.title || "Building the Next Generation";
+	const title = aboutData?.title || "Building the Next Generation";
 	const subtitle =
-		data?.subtitle || "BRIDGING THE GAP BETWEEN COMPLEX LOGIC AND EXPERIENCE";
+		aboutData?.subtitle || "BRIDGING THE GAP BETWEEN LOGIC AND EXPERIENCE";
 	const description =
-		data?.description ||
+		aboutData?.description ||
 		"I specialize in architecting solutions that aren't just functional—they're smart.";
 
 	return (
 		<section
 			ref={sectionRef}
 			id='about'
-			className='relative  bg-background overflow-hidden'>
-			{/* Background Grid - Matching your Hero image exactly */}
+			className='relative py-24 md:py-32 bg-background overflow-hidden'>
+			{/* Background Grid - Fixed size for consistent technical look */}
 			<div
-				className='absolute inset-0 z-0 opacity-[0.05]'
+				className='absolute inset-0 z-0 opacity-[0.03] pointer-events-none'
 				style={{
-					backgroundImage: `linear-gradient(to right, #808080 1px, transparent 1px), linear-gradient(to bottom, #808080 1px, transparent 1px)`,
-					backgroundSize: "3rem 3rem",
+					backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
+					backgroundSize: "4rem 4rem",
 				}}
 			/>
 
-			{/* Ambient Blue Glow (Matches Hero top-right) */}
-			<div className='absolute top-0 right-0 w-125 h-125 bg-primary/10 blur-[120px] rounded-full -z-10' />
+			{/* Ambient Primary Glow */}
+			<div className='absolute -top-24 -right-24 size-125 bg-primary/5 blur-[120px] rounded-full -z-10' />
 
 			<div className='container mx-auto px-6 relative z-10'>
-				<div className='flex flex-col lg:flex-row gap-20'>
-					{/* Left Content: Text & Stats */}
-					<div className='lg:w-1/2 lg:sticky lg:top-32 h-fit'>
+				<div className='flex flex-col lg:flex-row gap-16 lg:gap-24'>
+					{/* LEFT CONTENT: Sticky Header & Statistics */}
+					<div className='lg:w-[45%] lg:sticky lg:top-24 h-fit'>
 						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
+							initial={{ opacity: 0, x: -20 }}
+							whileInView={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.6 }}
 							viewport={{ once: true }}
 							className='space-y-8'>
-							{/* Accent Line + Subtitle */}
 							<div className='flex items-center gap-4'>
-								<div className='h-0.5 w-12 bg-primary/40' />
-								<span className='text-primary font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold'>
+								<div className='h-0.5 w-10 bg-primary' />
+								<span className='text-primary font-mono text-[10px] uppercase tracking-[0.3em] font-bold'>
 									{subtitle}
 								</span>
 							</div>
 
-							{/* Headline with "the" highlight style */}
-							<h2 className='text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1]'>
-								{title.split(" ").map((word, i) => (
+							<h2 className='text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[0.95]'>
+								{title.split(" ").map((word: string, i: number) => (
 									<span
 										key={i}
 										className={cn(
+											"inline-block mr-3",
 											word.toLowerCase() === "the" &&
-												"text-muted-foreground/30",
+												"text-muted-foreground/20 italic font-light",
 										)}>
-										{word}{" "}
+										{word}
 									</span>
 								))}
 								<span className='text-primary'>.</span>
 							</h2>
-
-							<p className='text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl'>
+							<p className='text-lg text-muted-foreground leading-relaxed max-w-md border-l-2 border-primary/10 pl-6'>
 								{description}
 							</p>
 
-							{/* Stats Grid - Matching the Hero bottom-left style */}
-							<div className='grid grid-cols-2 gap-y-10 gap-x-12 pt-6 border-t border-border/50'>
-								{data?.statuses.map((status) => (
+							{/* Stats Grid */}
+							<div className='grid grid-cols-2 gap-8 pt-10'>
+								{aboutData?.statuses?.map((status: any) => (
 									<div key={status.id} className='relative group'>
-										<div className='flex items-center gap-2 mb-1'>
-											<span className='text-[10px] font-mono text-muted-foreground uppercase tracking-widest font-bold'>
+										<div className='flex items-center gap-2 mb-2'>
+											<span className='text-[10px] font-mono text-muted-foreground/60 uppercase tracking-widest'>
 												{status.label}
 											</span>
 											<Plus
 												size={10}
-												className='text-primary/40 group-hover:rotate-90 transition-transform'
+												className='text-primary transition-transform group-hover:rotate-90'
 											/>
 										</div>
-										<div className='flex items-baseline gap-1'>
-											<span className='text-4xl font-bold tracking-tighter group-hover:text-primary transition-colors'>
+										<div className='flex items-baseline'>
+											<span className='text-5xl font-bold tracking-tighter tabular-nums transition-colors group-hover:text-primary'>
 												{status.value}
 											</span>
 										</div>
-										{/* Corner decoration to match the "+" in your image */}
-										<Plus
-											className='absolute -right-4 top-1/2 -translate-y-1/2 text-muted-foreground/10'
-											size={16}
-										/>
 									</div>
 								))}
 							</div>
 						</motion.div>
 					</div>
 
-					{/* Right Content: Modern Cards */}
-					<div className='lg:w-1/2 space-y-6'>
-						{data?.corePillars.map((pillar, idx) => {
+					{/* RIGHT CONTENT: Pillar Cards with Hover & Parallax */}
+					<div className='lg:w-[55%] space-y-8'>
+						{aboutData?.corePillars?.map((pillar: any, idx: number) => {
 							const Icon = ICON_MAP[pillar.icon] || Sparkles;
 							return (
 								<motion.div
 									key={pillar.id || idx}
-									style={{ rotate }}
-									whileHover={{ x: 10 }}
-									className='group relative bg-white/2 dark:bg-black/[0.02] border border-border/50 hover:border-primary/40 hover:bg-card transition-all duration-500 rounded-[2.5rem] p-8 md:p-10 shadow-sm'>
-									<div className='flex gap-6 items-start'>
-										{/* Circular Icon with Primary Glow */}
-										<div className='relative shrink-0'>
-											<div className='absolute inset-0 bg-primary/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700' />
-											<div className='relative size-14 rounded-full bg-background border flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-500 shadow-inner'>
-												<Icon size={24} />
-											</div>
-										</div>
+									style={{ y: yParallax, rotate: rotateParallax }}
+									className='group relative'>
+									<div className='absolute -inset-px bg-linear-to-r from-transparent via-border to-transparent rounded-4xl opacity-50 group-hover:via-primary/50 transition-all duration-500' />
 
-										<div className='flex-1 space-y-2'>
-											<div className='flex items-center justify-between'>
-												<h3 className='text-xl md:text-2xl font-bold tracking-tight'>
-													{pillar.title}
-												</h3>
-												<span className='text-[10px] font-mono text-muted-foreground/40 font-bold'>
-													0{idx + 1}
-												</span>
+									<div className='relative bg-card/50 backdrop-blur-sm border border-border/40 hover:bg-card transition-all duration-500 rounded-4xl p-4 md:p-6'>
+										<div className='flex flex-col sm:flex-row gap-4 items-start'>
+											{/* Technical Icon Wrapper */}
+											<div className='relative shrink-0'>
+												<div className='absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700' />
+												<div className='relative size-16 rounded-2xl bg-background border-2 border-border/50 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary/50 transition-all duration-500'>
+													<Icon size={30} strokeWidth={1.5} />
+													<div className='absolute -top-1 -right-1 size-2 bg-primary rounded-full scale-0 group-hover:scale-100 transition-transform' />
+												</div>
 											</div>
-											<p className='text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors'>
-												{pillar.description}
-											</p>
-										</div>
 
-										{/* Action Arrow */}
-										<div className='hidden sm:flex size-10 rounded-full border border-border items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary transition-all'>
-											<ArrowUpRight size={18} />
+											<div className='flex-1 space-y-2'>
+												<div className='flex items-center justify-between'>
+													<h3 className='text-2xl font-bold tracking-tight'>
+														{pillar.title}
+													</h3>
+													<span className='font-mono text-xs text-muted-foreground/30'>
+														[{idx + 1 < 10 ? `0${idx + 1}` : idx + 1}]
+													</span>
+												</div>
+												<p className='text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors'>
+													{pillar.description}
+												</p>
+											</div>
+
+											{/* Action Decoration */}
+											<div className='hidden xl:flex size-12 rounded-full border border-border items-center justify-center text-muted-foreground group-hover:scale-110 group-hover:text-primary group-hover:border-primary transition-all duration-500'>
+												<ArrowUpRight size={20} />
+											</div>
 										</div>
 									</div>
 								</motion.div>

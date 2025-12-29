@@ -22,53 +22,57 @@ enum MessageStatus {
   SPAM
 }
 
+enum ProjectCategory {
+  WEB_DEVELOPMENT
+  MOBILE_APP
+  UI_UX_DESIGN
+  GRAPHIC_DESIGN
+  DATA_SCIENCE
+  AI
+  OPEN_SOURCE
+  OTHERS
+}
+
 // -----------------------------------------
-// 1. IDENTITY & OWNER (The Core)
+// 1. IDENTITY & PROFILE
 // -----------------------------------------
 
 model User {
   id      String   @id @default(cuid())
-  name    String?
+  name    String
   email   String?  @unique
-  phone   String? // User-level phone field
+  phone   String?
   image   String?
   profile Profile?
 }
 
 model Profile {
-  id     String @id @default("owner-static")
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Direct Contact Info
-  email    String  @default("contact@example.com")
-  phone    String? // Primary professional phone
-  location String? @default("Remote / Yemen")
-
-  // Relations
-  contactMe ContactMe?
+  id        String     @id @default("owner-static")
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String     @default("contact@example.com")
+  phone     String?
+  location  String?    @default("Remote / Yemen")
+  socials   ContactMe?
   updatedAt DateTime   @updatedAt
 }
 
 model ContactMe {
-  id        String  @id @default(cuid())
-  profileId String  @unique
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  // Social Channels & Handles
+  id          String   @id @default(cuid())
+  profileId   String   @unique
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   githubUrl   String?
   linkedinUrl String?
-  xUrl        String? // X (formerly Twitter)
+  xUrl        String?
   whatsapp    String?
   facebook    String?
   tiktok      String?
   figma       String?
-
-  updatedAt DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
 }
 
 // -----------------------------------------
-// 2. HERO & ABOUT (The Narrative)
+// 2. HERO & ABOUT
 // -----------------------------------------
 
 model HeroSection {
@@ -86,66 +90,178 @@ model HeroSection {
 }
 
 model AboutSection {
-  id          String @id @default("about-static")
-  title       String @default("A Hybrid Approach to Problem Solving")
-  subtitle    String @default("My background in Security Research...")
-  description String @db.Text
-
-  corePillars CorePillars[]
+  id          String        @id @default("about-static")
+  title       String        @default("A Hybrid Approach to Problem Solving")
+  subtitle    String        @default("My background in Security Research...")
+  description String        @db.Text
+  corePillars CorePillar[]
   statuses    AboutStatus[]
   updatedAt   DateTime      @updatedAt
 }
 
 model AboutStatus {
   id             String       @id @default(cuid())
-  label          String // e.g., "Years Exp."
-  value          String // e.g., "3+"
+  label          String
+  value          String
   isActive       Boolean      @default(true)
   aboutSectionId String
   aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
-  updatedAt      DateTime     @updatedAt
 }
 
-model CorePillars {
+model CorePillar {
   id             String       @id @default(cuid())
   title          String
   description    String       @db.Text
-  icon           String // Lucide icon name
+  icon           String
   aboutSectionId String
   aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
-  updatedAt      DateTime     @updatedAt
 }
 
 // -----------------------------------------
-// 3. WORK, SKILLS & MESSAGES
+// 3. BLOG SYSTEM (Enhanced)
 // -----------------------------------------
 
-model Project {
+model Blog {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  description String   @db.Text
-  content     String?  @db.Text
-  coverImage  String
+  category    String   @default("General")
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  image       String // Featured Image
+  gallery     String[] // Additional images inside post
+  readTime    String?  @default("5 min")
+  isPublished Boolean  @default(false)
+
+  tags     Tag[] // Relation to Tags
+  likes    Like[]
+  comments Comment[]
+
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Tag {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  blogs    Blog[]
+  projects Project[]
+}
+
+model Like {
+  id     String  @id @default(cuid())
+  blogId String
+  blog   Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  ip     String? // Track unique likes without auth
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  name      String
+  content   String   @db.Text
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+// -----------------------------------------
+// 4. WORK & EXPERIENCE
+// -----------------------------------------
+
+model Project {
+  id          String          @id @default(cuid())
+  title       String
+  slug        String          @unique
+  description String          @db.Text
+  content     String?         @db.Text
+  image       String
   gallery     String[]
-  category    String
+  category    ProjectCategory @default(WEB_DEVELOPMENT)
   liveUrl     String?
   repoUrl     String?
-  isFeatured  Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  isPublished Boolean  @default(false)
-  skills      Skill[]  @relation("ProjectToSkill")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isFeatured  Boolean         @default(false)
+  isActive    Boolean         @default(true)
+  isPublished Boolean         @default(true)
+
+  techniques Technique[]
+  tags       Tag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+// model ExperienceStatuse {
+//   PRESENT
+
+// }
+model Experience {
+  id          String      @id @default(cuid())
+  companyName String
+  role        String
+  // status 
+  location    String?
+  startDate   DateTime
+  endDate     DateTime? // Null = Present
+  description String?     @db.Text
+  techniques  Technique[]
+  updatedAt   DateTime    @updatedAt
+}
+
+model Education {
+  id           String   @id @default(cuid())
+  institution  String
+  degree       String
+  fieldOfStudy String
+  startDate    DateTime
+  endDate      DateTime
+  grade        String?
+  description  String?  @db.Text
+}
+
+model Technique {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  icon        String?
+  projects    Project[]
+  experiences Experience[]
+}
+
+// -----------------------------------------
+// 5. UTILITIES & MESSAGES
+// -----------------------------------------
+
+model SkillCategory {
+  id       String  @id @default(cuid())
+  title    String
+  icon     String
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+  skills   Skill[]
 }
 
 model Skill {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  category String
-  icon     String
-  level    Int       @default(90)
-  projects Project[] @relation("ProjectToSkill")
+  id         String        @id @default(cuid())
+  name       String
+  level      Int?
+  icon       String?
+  categoryId String
+  category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  clientName  String
+  clientTitle String
+  content     String   @db.Text
+  avatarUrl   String
+  linkedinUrl String?
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
 }
 
 model ContactMessage {
@@ -155,31 +271,7 @@ model ContactMessage {
   subject   String?
   message   String        @db.Text
   status    MessageStatus @default(UNREAD)
-  ipAddress String?
   createdAt DateTime      @default(now())
-}
-
-// -----------------------------------------
-// 4. CREDENTIALS & CONFIG
-// -----------------------------------------
-
-model Testimonial {
-  id        String   @id @default(cuid())
-  name      String
-  role      String
-  avatar    String
-  content   String   @db.Text
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-}
-
-model Certification {
-  id           String  @id @default(cuid())
-  title        String
-  issuer       String
-  issueDate    String
-  credentialId String?
-  link         String?
 }
 
 model SiteConfig {
@@ -191,3 +283,292 @@ model SiteConfig {
   metaDescription String?
   updatedAt       DateTime @updatedAt
 }
+
+// // --- ENUMS ---
+
+// enum Availability {
+//   AVAILABLE
+//   BUSY
+//   OPEN_FOR_COMMISSION
+// }
+
+// enum MessageStatus {
+//   UNREAD
+//   READ
+//   ARCHIVED
+//   SPAM
+// }
+
+// // -----------------------------------------
+// // 1. IDENTITY & OWNER (The Core)
+// // -----------------------------------------
+
+// model User {
+//   id      String   @id @default(cuid())
+//   name    String?
+//   email   String?  @unique
+//   phone   String? // User-level phone field
+//   image   String?
+//   profile Profile?
+// }
+
+// model Profile {
+//   id     String @id @default("owner-static")
+//   userId String @unique
+//   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   // Direct Contact Info
+//   email    String  @default("contact@example.com")
+//   phone    String? // Primary professional phone
+//   location String? @default("Remote / Yemen")
+
+//   // Relations
+//   contactMe ContactMe?
+//   updatedAt DateTime   @updatedAt
+// }
+
+// model ContactMe {
+//   id        String  @id @default(cuid())
+//   profileId String  @unique
+//   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+//   // Social Channels & Handles
+//   githubUrl   String?
+//   linkedinUrl String?
+//   xUrl        String? // X (formerly Twitter)
+//   whatsapp    String?
+//   facebook    String?
+//   tiktok      String?
+//   figma       String?
+
+//   updatedAt DateTime @updatedAt
+// }
+
+// // -----------------------------------------
+// // 2. HERO & ABOUT (The Narrative)
+// // -----------------------------------------
+
+// model HeroSection {
+//   id              String       @id @default("hero-static")
+//   status          Availability @default(AVAILABLE)
+//   greeting        String       @default("Hi, I am")
+//   name            String       @default("Mohammed Yaseen")
+//   role            String       @default("Full-Stack Developer & AI Researcher")
+//   description     String       @db.Text
+//   primaryImage    String
+//   secondaryImages String[]
+//   resumeUrl       String?
+//   ctaText         String       @default("Start a Project")
+//   updatedAt       DateTime     @updatedAt
+// }
+
+// model AboutSection {
+//   id          String @id @default("about-static")
+//   title       String @default("A Hybrid Approach to Problem Solving")
+//   subtitle    String @default("My background in Security Research...")
+//   description String @db.Text
+
+//   corePillars CorePillars[]
+//   statuses    AboutStatus[]
+//   updatedAt   DateTime      @updatedAt
+// }
+
+// model AboutStatus {
+//   id             String       @id @default(cuid())
+//   label          String // e.g., "Years Exp."
+//   value          String // e.g., "3+"
+//   isActive       Boolean      @default(true)
+//   aboutSectionId String
+//   aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
+//   updatedAt      DateTime     @updatedAt
+// }
+
+// model CorePillars {
+//   id             String       @id @default(cuid())
+//   title          String
+//   description    String       @db.Text
+//   icon           String // Lucide icon name
+//   aboutSectionId String
+//   aboutSection   AboutSection @relation(fields: [aboutSectionId], references: [id], onDelete: Cascade)
+//   updatedAt      DateTime     @updatedAt
+// }
+
+// // -----------------------------------------
+// // 3. WORK, SKILLS & MESSAGES
+// // -----------------------------------------
+
+// // --- schema.prisma ---
+// enum ProjectCategory {
+//   WEB_DEVELOPMENT
+//   MOBILE_APP
+//   UI_UX_DESIGN
+//   GRAPHIC_DESIGN
+//   DATA_SCIENCE
+//   AI
+//   OPEN_SOURCE
+//   OTHERS
+// }
+
+// model Project {
+//   id          String          @id @default(cuid())
+//   title       String
+//   slug        String          @unique
+//   description String          @db.Text
+//   content     String?         @db.Text
+//   image       String // Renamed to match your UI 'project.image'
+//   gallery     String[]        @default([])
+//   category    ProjectCategory @default(WEB_DEVELOPMENT)
+//   liveUrl     String?
+//   repoUrl     String?
+//   isActive    Boolean         @default(true)
+//   isFeatured  Boolean         @default(false)
+//   isPublished Boolean         @default(false)
+
+//   // Relations
+//   techniques Technique[]
+//   tags       Tags[] // Fixed relationship
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@index([slug])
+//   @@index([isFeatured]) // Helpful for your "Featured Projects" section query
+// }
+
+// model Tags {
+//   id        String    @id @default(cuid())
+//   name      String
+//   projects  Project[]
+//   createdAt DateTime  @default(now())
+// }
+
+// model SkillCategory {
+//   id       String  @id @default(cuid())
+//   title    String
+//   icon     String // lucide name or icon key
+//   order    Int     @default(0)
+//   isActive Boolean @default(true)
+
+//   skills Skill[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Skill {
+//   id         String        @id @default(cuid())
+//   name       String
+//   level      Int? // optional: 1–5 or %
+//   order      Int           @default(0)
+//   isVisible  Boolean       @default(true)
+//   icon       String?
+//   categoryId String
+//   category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+//   createdAt  DateTime      @default(now())
+//   updatedAt  DateTime      @updatedAt
+// }
+
+// model ContactMessage {
+//   id        String        @id @default(cuid())
+//   name      String
+//   email     String
+//   subject   String?
+//   message   String        @db.Text
+//   status    MessageStatus @default(UNREAD)
+//   ipAddress String?
+//   createdAt DateTime      @default(now())
+// }
+
+// // -----------------------------------------
+// // 4. CREDENTIALS & CONFIG
+// // -----------------------------------------
+
+// model Testimonial {
+//   id           String  @id @default(cuid())
+//   client_name  String
+//   client_title String
+//   role         String
+//   avatar_url   String
+//   content      String  @db.Text
+//   isActive     Boolean @default(true)
+//   linkedin_url String?
+//   github_url   String?
+//   is_featured  Boolean
+
+//   createdAt DateTime @default(now())
+// }
+
+// model Certification {
+//   id           String  @id @default(cuid())
+//   title        String
+//   issuer       String
+//   issueDate    String
+//   credentialId String?
+//   link         String?
+// }
+
+// model SiteConfig {
+//   id              String   @id @default("config-static")
+//   siteName        String   @default("DevPortfolio")
+//   footerText      String
+//   profileViews    Int      @default(0)
+//   enableBlog      Boolean  @default(true)
+//   metaDescription String?
+//   updatedAt       DateTime @updatedAt
+// }
+
+// model Company {
+//   id          String  @id @default(cuid())
+//   name        String
+//   description String?
+//   image       String?
+//   location    String?
+// }
+
+// model Experience {
+//   id           String      @id @default(cuid())
+//   companyName  String
+//   role         String
+//   location     String?
+//   startDate    DateTime
+//   endDate      DateTime
+//   description  String?
+//   technologies Technique[]
+// }
+
+// model Technique {
+//   id        String    @id @default(cuid())
+//   name      String
+//   icon      String?
+//   projects  Project[]
+//   createdAt DateTime  @default(now())
+
+//   experiences Experience[]
+// }
+
+// model Educations {
+//   id             String   @id @default(cuid())
+//   institution    String
+//   degree         String
+//   field_of_study String
+//   startDate      DateTime
+//   endDate        DateTime
+//   grade          String?
+//   other          String?  @db.Text
+// }
+
+// model Blogs {
+//   id           String    @id @default(cuid())
+//   title        String
+//   slug         String
+//   summary      String    @db.Text
+//   content      String    @db.Text
+//   cover_image  String
+//   tags         String
+//   published_at DateTime
+//   reading_time Int
+//   likes        Likes[]
+//   coments      Coments[]
+//   saved        Saved[]
+//   share        Share[]
+// }

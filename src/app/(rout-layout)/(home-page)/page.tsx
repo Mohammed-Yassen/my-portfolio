@@ -1,6 +1,11 @@
 /** @format */
 import { SkillsSection } from "@/components/sections/skills-section";
-import { AboutLoader, HeroLoader } from "./loaders";
+import {
+	AboutLoader,
+	HeroLoader,
+	ProjectsLoader,
+	SkillsLoader,
+} from "./loaders";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { ExperienceSection } from "@/components/sections/experience-section";
 import { CertificationsSection } from "@/components/sections/certification-section";
@@ -22,8 +27,10 @@ export default function Home() {
 			/>
 			<HeroLoader />
 			<AboutLoader />
-			<SkillsSection />
-			<ProjectsSection />
+			{/* SkillsLoader */}
+			<SkillsLoader />
+			<ProjectsLoader />
+			{/* <ProjectsSection /> */}
 			<ExperienceSection />
 			<CertificationsSection />
 			<BlogSection />

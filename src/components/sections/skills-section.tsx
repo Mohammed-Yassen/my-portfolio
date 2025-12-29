@@ -3,83 +3,119 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Layout, Server, Lock, Cpu } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
-const skillCategories = [
-	{
-		title: "Frontend Development",
-		icon: <Layout className='w-5 h-5 text-blue-500' />,
-		skills: ["React / Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-	},
-	{
-		title: "Backend & Database",
-		icon: <Server className='w-5 h-5 text-green-500' />,
-		skills: [
-			"Node.js",
-			"PostgreSQL",
-			"Prisma / Drizzle",
-			"Supabase / Firebase",
-		],
-	},
-	{
-		title: "Research & Security",
-		icon: <Lock className='w-5 h-5 text-red-500' />,
-		skills: [
-			"Intrusion Detection",
-			"Network Security",
-			"Data Analysis",
-			"Python / ML",
-		],
-	},
-	{
-		title: "Architecture & Tools",
-		icon: <Cpu className='w-5 h-5 text-purple-500' />,
-		skills: ["Clean Architecture", "RESTful APIs", "Git / GitHub", "Docker"],
-	},
-];
+interface Skill {
+	id: string;
+	name: string;
+	level: number;
+	isVisible: boolean;
+}
 
-export const SkillsSection = () => {
+interface SkillCategory {
+	id: string;
+	title: string;
+	icon: string;
+	skills: Skill[];
+}
+
+interface SkillsSectionProps {
+	data: SkillCategory[];
+}
+
+// Helper to determine color based on skill level
+const getLevelColor = (level: number) => {
+	if (level >= 90) return "from-emerald-500 to-teal-400"; // Expert
+	if (level >= 70) return "from-blue-500 to-cyan-400"; // Advanced
+	if (level >= 50) return "from-amber-500 to-orange-400"; // Intermediate
+	return "from-rose-500 to-pink-400"; // Beginner
+};
+
+export const SkillsSection = ({ data }: SkillsSectionProps) => {
 	return (
 		<section id='skills' className='py-24 bg-background transition-colors'>
-			<div className='container mx-auto px-6 md:px-12'>
-				<div className='text-center max-w-2xl mx-auto mb-16'>
-					<h2 className='text-3xl font-bold mb-4 italic'>
-						Technical <span className='text-primary'>Expertise</span>
-					</h2>
-					<p className='text-muted-foreground'>
+			<div className='container mx-auto px-6'>
+				{/* Header */}
+				<div className='mb-16 flex items-center justify-center flex-col '>
+					<motion.h2
+						initial={{ opacity: 0, x: -20 }}
+						whileInView={{ opacity: 1, x: 0 }}
+						className='text-4xl font-bold tracking-tight '>
+						Technical <span className='text-primary italic'>Expertise</span>
+					</motion.h2>
+					<div className='h-1 w-20  bg-primary my-2 rounded-full' />
+					<p className='text-muted-foreground  '>
 						Building secure, scalable, and research-backed digital solutions.
 					</p>
 				</div>
 
-				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-					{skillCategories.map((category, index) => (
-						<motion.div
-							key={index}
-							initial={{ opacity: 0, scale: 0.95 }}
-							whileInView={{ opacity: 1, scale: 1 }}
-							viewport={{ once: true }}
-							transition={{ duration: 0.4, delay: index * 0.1 }}
-							className='p-6 rounded-2xl border bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300'>
-							<div className='flex items-center gap-3 mb-6'>
-								<div className='p-2 rounded-lg bg-muted dark:bg-muted/20'>
-									{category.icon}
+				{/* Responsive Grid: Auto-fills based on available width */}
+				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6'>
+					{data.map((category, catIndex) => {
+						const IconComponent =
+							(LucideIcons as any)[category.icon] || LucideIcons.Layers;
+
+						return (
+							<motion.div
+								key={category.id}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.4, delay: catIndex * 0.05 }}
+								className='group flex flex-col h-full p-6 rounded-2xl border bg-card hover:shadow-xl hover:shadow-primary/5 transition-all duration-300'>
+								{/* Header with Glass Effect Icon */}
+								<div className='flex items-center gap-4 mb-8'>
+									<div className='relative'>
+										<div className='absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity' />
+										<div className='relative p-3 rounded-xl bg-muted dark:bg-zinc-900 border text-primary'>
+											<IconComponent size={24} />
+										</div>
+									</div>
+									<h3 className='font-bold text-lg tracking-wide'>
+										{category.title}
+									</h3>
 								</div>
-								<h3 className='font-bold text-lg'>{category.title}</h3>
-							</div>
-							<ul className='space-y-3'>
-								{category.skills.map((skill) => (
-									<li
-										key={skill}
-										className='flex items-center text-muted-foreground group'>
-										<div className='w-1.5 h-1.5 rounded-full bg-primary/40 mr-3 group-hover:bg-primary transition-colors' />
-										<span className='group-hover:text-foreground transition-colors'>
-											{skill}
-										</span>
-									</li>
-								))}
-							</ul>
-						</motion.div>
-					))}
+
+								{/* Skill Bars */}
+								<div className='space-y-5 grow'>
+									{category.skills
+										.filter((s) => s.isVisible)
+										.sort((a, b) => b.level - a.level) // Show highest skills first
+										.map((skill, skillIndex) => (
+											<div key={skill.id} className='group/skill'>
+												<div className='flex justify-between items-center mb-1.5'>
+													<span className='text-sm font-medium text-muted-foreground group-hover/skill:text-foreground transition-colors'>
+														{skill.name}
+													</span>
+													<span className='text-[10px] font-mono font-bold opacity-0 group-hover/skill:opacity-100 transition-opacity'>
+														{skill.level}%
+													</span>
+												</div>
+
+												{/* Track */}
+												<div className='h-1 w-full bg-muted rounded-full overflow-hidden'>
+													{/* Progress with Spring Animation */}
+													<motion.div
+														initial={{ width: 0 }}
+														whileInView={{ width: `${skill.level}%` }}
+														viewport={{ once: true }}
+														transition={{
+															type: "spring",
+															bounce: 0,
+															duration: 1.5,
+															delay: 0.2 + skillIndex * 0.1,
+														}}
+														className={`h-full rounded-full bg-gradient-to-r ${getLevelColor(
+															skill.level,
+														)}`}
+													/>
+												</div>
+											</div>
+										))}
+								</div>
+							</motion.div>
+						);
+					})}
 				</div>
 			</div>
 		</section>

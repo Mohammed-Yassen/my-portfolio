@@ -13,45 +13,46 @@ import {
 	Sparkles,
 	Loader2,
 	BarChart3,
+	TextQuote,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { AboutFormSchema, aboutSchema } from "@/lib/validations";
-import { AboutWithRelations } from "@/type";
-import { UpdateAboutSection } from "@/app/actions";
 import { useRouter } from "next/navigation";
+import { AboutFormValues, aboutSchema } from "@/lib/validations";
+import { FullAboutSection } from "@/type";
+import { FormFieldWrapper } from "@/components/input-form-wrapper";
+import { IconPicker } from "../icon-picker";
+import { cn } from "@/lib/utils"; // Ensure you have the cn utility
+import { updateAboutAction } from "@/app/actions";
 
 interface AboutSectionFieldsProps {
-	aboutData: AboutWithRelations | null;
+	aboutData: FullAboutSection | null;
 }
 
 export const AboutSectionFields = ({ aboutData }: AboutSectionFieldsProps) => {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
-	// 1. Initialize Form with strict typing
-	const form = useForm<AboutFormSchema>({
+	console.log("about data");
+	console.log(aboutData);
+
+	const form = useForm<AboutFormValues>({
 		resolver: zodResolver(aboutSchema) as any,
 		defaultValues: {
-			title: aboutData?.title || "What I Do ?",
-			subtitle: aboutData?.subtitle || "A Hybrid Approach to Problem Solving",
-			description: aboutData?.description || "",
+			title: aboutData?.title || "Building the Next Generation",
+			subtitle:
+				aboutData?.subtitle || "BRIDGING THE GAP BETWEEN LOGIC AND EXPERIENCE",
+			description:
+				aboutData?.description ||
+				"I specialize in architecting solutions that aren't just functional—they're smart.",
 			corePillars: aboutData?.corePillars || [],
 			statuses: aboutData?.statuses || [],
 		},
 	});
 
-	// 2. Manage Dynamic Lists
 	const {
 		fields: pillarFields,
 		append: appendPillar,
@@ -64,210 +65,176 @@ export const AboutSectionFields = ({ aboutData }: AboutSectionFieldsProps) => {
 		remove: removeStatus,
 	} = useFieldArray({ control: form.control, name: "statuses" });
 
-	// 3. Senior Level Submit Handler
-	const onSubmit = async (values: AboutFormSchema) => {
+	const onSubmit = async (values: AboutFormValues) => {
 		startTransition(async () => {
 			try {
-				const result = await UpdateAboutSection(values);
-
-				if (result?.success) {
-					toast.success("Philosophy Synchronized", {
-						description:
-							"Your professional narrative has been updated successfully.",
-					});
-					router.refresh();
-				} else {
-					// Handle specific server-side errors
-					toast.error("Sync Failed", {
-						description:
-							typeof result?.error === "string"
-								? result.error
-								: "Check your connection and try again.",
-					});
-				}
+				await updateAboutAction(values);
+				toast.success("Philosophy Synchronized");
+				router.refresh();
 			} catch (error) {
-				console.error("Critical Submission Error:", error);
-				toast.error("Internal Server Error", {
-					description:
-						"An unexpected error occurred. Logs are available in console.",
-				});
+				toast.error("Critical Sync Error");
 			}
 		});
-	};
-
-	// 4. Validation Error Handler (The Experience Addition)
-	const onValidationError = (errors: any) => {
-		console.warn("Form Validation Errors:", errors);
-
-		// Logic to tell the user exactly what's wrong
-		const errorKeys = Object.keys(errors);
-		if (errorKeys.length > 0) {
-			const firstError = errorKeys[0];
-			toast.error("Validation Error", {
-				description: `Please check the ${firstError} section. All fields are required.`,
-			});
-		}
 	};
 
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit, onValidationError)}
-				className='space-y-12 pb-20'>
+				onSubmit={form.handleSubmit(onSubmit)}
+				className='max-w-6xl mx-auto px-4 space-y-12 pb-40 pt-10'>
 				{/* 1. MAIN NARRATIVE SECTION */}
-				<section className='bg-white dark:bg-zinc-950 p-8 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-sm'>
-					<div className='flex items-center gap-3 mb-8'>
-						<div className='p-2 bg-blue-500/10 rounded-lg'>
-							<ShieldCheck className='text-blue-600' size={20} />
-						</div>
-						<h3 className='font-bold text-lg uppercase tracking-tight'>
-							Narrative Core
-						</h3>
+				<section className='relative overflow-hidden bg-white dark:bg-zinc-950 p-6 md:p-12 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800/50 shadow-2xl shadow-zinc-200/50 dark:shadow-none'>
+					<div className='absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none'>
+						<ShieldCheck size={120} />
 					</div>
 
-					<div className='space-y-6'>
-						<FormField
+					<div className='flex items-center gap-4 mb-12'>
+						<div className='p-4 bg-blue-500/10 rounded-2xl text-blue-600 dark:text-blue-400'>
+							<ShieldCheck size={28} />
+						</div>
+						<div>
+							<h3 className='font-black text-2xl tracking-tight text-zinc-900 dark:text-white'>
+								Narrative Core
+							</h3>
+							<p className='text-sm text-zinc-500 font-medium'>
+								Define your professional identity and vision.
+							</p>
+						</div>
+					</div>
+
+					<div className='grid gap-10 relative z-10'>
+						<FormFieldWrapper
 							control={form.control}
 							name='title'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400'>
-										Main Heading
-									</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											placeholder='titel'
-											className='h-12 text-xl font-bold bg-zinc-50/50 dark:bg-zinc-900/50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500/20'
-										/>
-									</FormControl>
-									<FormMessage className='text-[10px] font-bold' />
-								</FormItem>
+							label='Main Heading'>
+							{(field) => (
+								<Input
+									{...field}
+									placeholder='Enter Main Title...'
+									className='h-16 text-xl md:text-3xl font-black bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-2xl focus-visible:ring-blue-500/20'
+								/>
 							)}
-						/>
-						<FormField
+						</FormFieldWrapper>
+
+						<FormFieldWrapper
 							control={form.control}
 							name='subtitle'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400'>
-										sub titel
-									</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											placeholder='Who are you professionally?'
-											className='h-12 text-xl font-bold bg-zinc-50/50 dark:bg-zinc-900/50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500/20'
-										/>
-									</FormControl>
-									<FormMessage className='text-[10px] font-bold' />
-								</FormItem>
+							label='Subheading'>
+							{(field) => (
+								<Input
+									{...field}
+									className='h-14 text-lg font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-2xl'
+								/>
 							)}
-						/>
-						<FormField
+						</FormFieldWrapper>
+
+						<FormFieldWrapper
 							control={form.control}
 							name='description'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400'>
-										Biography
-									</FormLabel>
-									<FormControl>
-										<Textarea
-											{...field}
-											placeholder='Your journey, expertise, and vision...'
-											className='min-h-40 bg-zinc-50/50 dark:bg-zinc-900/50 border-none rounded-2xl leading-relaxed resize-none p-4'
-										/>
-									</FormControl>
-									<FormMessage className='text-[10px] font-bold' />
-								</FormItem>
+							label='Biography'>
+							{(field) => (
+								<div className='relative group'>
+									<Textarea
+										{...field}
+										className='min-h-62.5 bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-[2rem] leading-relaxed resize-none p-8 text-lg'
+									/>
+									<TextQuote
+										className='absolute bottom-8 right-8 text-zinc-200 dark:text-zinc-800 group-focus-within:text-blue-500/20 transition-colors'
+										size={48}
+									/>
+								</div>
 							)}
-						/>
+						</FormFieldWrapper>
 					</div>
 				</section>
 
-				{/* 2. DYNAMIC IMPACT METRICS */}
-				<section className='space-y-4'>
-					<div className='flex justify-between items-center px-2'>
-						<div className='flex items-center gap-2'>
-							<BarChart3 size={18} className='text-orange-500' />
-							<h3 className='font-bold text-sm uppercase tracking-widest'>
-								Impact Metrics
-							</h3>
+				{/* 2. IMPACT METRICS */}
+				<section className='space-y-8'>
+					<div className='flex flex-col md:flex-row justify-between items-start md:items-end gap-4 px-4'>
+						<div className='space-y-1'>
+							<div className='flex items-center gap-2 text-orange-500'>
+								<BarChart3 size={20} />
+								<h3 className='font-black text-sm uppercase tracking-widest'>
+									Impact Metrics
+								</h3>
+							</div>
+							<p className='text-xs text-zinc-500'>
+								Quantifiable achievements and statistics.
+							</p>
 						</div>
 						<Button
 							type='button'
 							variant='outline'
-							size='sm'
 							onClick={() =>
 								appendStatus({ label: "", value: "", isActive: true })
 							}
-							className='rounded-full text-[10px] font-black h-8 px-4 border-dashed'>
-							<Plus size={14} className='mr-1' /> ADD METRIC
+							className='w-full md:w-auto rounded-xl font-bold h-11 px-6 border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:text-white transition-all shadow-sm'>
+							<Plus size={16} className='mr-2' /> ADD METRIC
 						</Button>
 					</div>
 
-					<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
 						{statusFields.map((field, index) => (
 							<div
 								key={field.id}
-								className='group relative p-4 space-y-2 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl transition-all hover:ring-2 hover:ring-orange-500/20'>
+								className='group relative p-8 bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] transition-all hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 dark:hover:bg-zinc-900'>
 								<button
 									type='button'
 									onClick={() => removeStatus(index)}
-									className='absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg'>
-									<Trash2 size={10} />
+									className='absolute -top-2 -right-2 p-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-xl hover:bg-red-500 dark:hover:bg-red-500 dark:hover:text-white z-20'>
+									<Trash2 size={14} />
 								</button>
-								<FormField
+								<FormFieldWrapper
 									control={form.control}
 									name={`statuses.${index}.value`}
-									render={({ field }) => (
+									label='Value'>
+									{(innerField) => (
 										<Input
-											{...field}
-											placeholder='e.g., 3+'
-											className='h-8 p-0 bg-transparent border-none text-xl font-black focus-visible:ring-0 placeholder:text-zinc-300'
+											{...innerField}
+											placeholder='3+'
+											className='h-12 p-0 bg-transparent border-none text-4xl font-black focus-visible:ring-0'
 										/>
 									)}
-								/>
-								<FormField
+								</FormFieldWrapper>
+								<FormFieldWrapper
 									control={form.control}
 									name={`statuses.${index}.label`}
-									render={({ field }) => (
+									label='Label'>
+									{(innerField) => (
 										<Input
-											{...field}
-											placeholder='Label'
-											className='h-4 p-0 bg-transparent border-none text-[10px] uppercase font-bold text-zinc-500 focus-visible:ring-0 placeholder:text-zinc-400'
+											{...innerField}
+											placeholder='Clients'
+											className='h-6 p-0 bg-transparent border-none text-xs font-bold text-zinc-400 uppercase tracking-tighter focus-visible:ring-0'
 										/>
 									)}
-								/>
+								</FormFieldWrapper>
 							</div>
 						))}
 					</div>
-					{statusFields.length === 0 && (
-						<p className='text-center text-[10px] text-zinc-400 font-medium py-4'>
-							No metrics added yet.
-						</p>
-					)}
 				</section>
 
-				{/* 3. CORE PILLARS SECTION */}
-				<section className='space-y-6'>
-					<div className='flex justify-between items-center px-2'>
-						<div className='flex items-center gap-2'>
-							<Layers size={18} className='text-emerald-500' />
-							<h3 className='font-bold text-sm uppercase tracking-widest'>
-								Value Pillars
-							</h3>
+				{/* 3. VALUE PILLARS */}
+				<section className='space-y-8'>
+					<div className='flex flex-col md:flex-row justify-between items-start md:items-end gap-4 px-4'>
+						<div className='space-y-1'>
+							<div className='flex items-center gap-2 text-emerald-500'>
+								<Layers size={20} />
+								<h3 className='font-black text-sm uppercase tracking-widest'>
+									Value Pillars
+								</h3>
+							</div>
+							<p className='text-xs text-zinc-500'>
+								The core principles that drive your work.
+							</p>
 						</div>
 						<Button
 							type='button'
 							variant='outline'
-							size='sm'
 							onClick={() =>
 								appendPillar({ title: "", description: "", icon: "Zap" })
 							}
-							className='rounded-full text-[10px] font-black h-8 px-4 border-dashed'>
-							<Plus size={14} className='mr-1' /> ADD PILLAR
+							className='w-full md:w-auto rounded-xl font-bold h-11 px-6 border-zinc-200 dark:border-zinc-800 hover:bg-emerald-500 hover:text-white transition-all shadow-sm'>
+							<Plus size={16} className='mr-2' /> ADD PILLAR
 						</Button>
 					</div>
 
@@ -275,74 +242,78 @@ export const AboutSectionFields = ({ aboutData }: AboutSectionFieldsProps) => {
 						{pillarFields.map((field, index) => (
 							<div
 								key={field.id}
-								className='group relative p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] hover:shadow-xl hover:shadow-emerald-500/5 transition-all'>
+								className='group relative p-8 md:p-10 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-200 dark:border-zinc-800 rounded-[3rem] transition-all hover:bg-white dark:hover:bg-zinc-900/60 hover:shadow-2xl hover:shadow-emerald-500/5'>
 								<Button
 									type='button'
 									variant='ghost'
 									size='icon'
 									onClick={() => removePillar(index)}
-									className='absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20'>
-									<Trash2 size={16} />
+									className='absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity rounded-full hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500'>
+									<Trash2 size={20} />
 								</Button>
 
-								<div className='flex flex-col gap-4'>
-									<div className='flex items-center gap-3'>
-										<div className='flex items-center gap-2 bg-zinc-100 dark:bg-zinc-900 p-2 px-3 rounded-xl'>
-											<Sparkles size={14} className='text-zinc-500' />
-											<FormField
-												control={form.control}
-												name={`corePillars.${index}.icon`}
-												render={({ field }) => (
-													<input
-														{...field}
-														placeholder='Icon name'
-														className='bg-transparent border-none text-[10px] font-mono w-20 focus:outline-none placeholder:text-zinc-400'
-													/>
-												)}
+								<div className='space-y-8'>
+									<div className='flex flex-col sm:flex-row items-start sm:items-center gap-6'>
+										<div className='p-4 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-2xl ring-1 ring-emerald-500/20'>
+											<IconPicker
+												value={form.watch(`corePillars.${index}.icon`) || "Zap"}
+												onChange={(v) =>
+													form.setValue(`corePillars.${index}.icon`, v)
+												}
 											/>
 										</div>
-										<FormField
-											control={form.control}
-											name={`corePillars.${index}.title`}
-											render={({ field }) => (
-												<Input
-													{...field}
-													placeholder='Title of Pillar'
-													className='h-8 p-0 bg-transparent border-none text-lg font-black focus-visible:ring-0'
-												/>
-											)}
-										/>
+										<div className='flex-1 w-full'>
+											<FormFieldWrapper
+												control={form.control}
+												name={`corePillars.${index}.title`}
+												label='Pillar Title'>
+												{(innerField) => (
+													<Input
+														{...innerField}
+														placeholder='e.g. Scalable Strategy'
+														className='h-12 p-0 bg-transparent border-none text-2xl font-black focus-visible:ring-0'
+													/>
+												)}
+											</FormFieldWrapper>
+										</div>
 									</div>
-									<FormField
+									<FormFieldWrapper
 										control={form.control}
 										name={`corePillars.${index}.description`}
-										render={({ field }) => (
+										label='Pillar Mission'>
+										{(innerField) => (
 											<Textarea
-												{...field}
-												placeholder='What does this value represent in your work?'
-												className='min-h-[80px] p-0 bg-transparent border-none text-sm text-zinc-500 resize-none focus-visible:ring-0 leading-relaxed'
+												{...innerField}
+												placeholder='Describe the impact of this pillar...'
+												className='min-h-25 p-0 bg-transparent border-none text-base text-zinc-500 dark:text-zinc-400 resize-none focus-visible:ring-0 leading-relaxed'
 											/>
 										)}
-									/>
+									</FormFieldWrapper>
 								</div>
 							</div>
 						))}
 					</div>
 				</section>
 
-				{/* STICKY CONTROL BAR */}
-				<div className='sticky bottom-8 flex justify-end pointer-events-none z-50'>
-					<Button
-						disabled={isPending}
-						type='submit'
-						className='pointer-events-auto h-14 px-10 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black font-black shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 transition-all gap-3 border-none'>
-						{isPending ? (
-							<Loader2 className='animate-spin h-5 w-5' />
-						) : (
-							<Zap size={18} fill='currentColor' />
-						)}
-						{isPending ? "SYNCING..." : "SAVE PHILOSOPHY"}
-					</Button>
+				{/* FLOATING SAVE BAR */}
+				<div className='fixed bottom-8 left-0 right-0 flex justify-center z-100 px-4 pointer-events-none'>
+					<div className='w-full max-w-lg pointer-events-auto'>
+						<Button
+							disabled={isPending}
+							type='submit'
+							className='w-full h-16 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-black font-black shadow-[0_20px_50px_rgba(0,0,0,0.4)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:scale-[1.03] active:scale-[0.97] transition-all gap-4 border-none text-lg group overflow-hidden'>
+							{isPending ? (
+								<Loader2 className='animate-spin h-6 w-6' />
+							) : (
+								<Zap
+									size={22}
+									className='fill-current group-hover:animate-bounce'
+								/>
+							)}
+							{isPending ? "SYNCHRONIZING..." : "SAVE PHILOSOPHY"}
+							<div className='absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none' />
+						</Button>
+					</div>
 				</div>
 			</form>
 		</Form>

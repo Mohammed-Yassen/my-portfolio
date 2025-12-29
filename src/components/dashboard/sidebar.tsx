@@ -29,7 +29,7 @@ import {
 
 const menuItems = [
 	{ name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-	{ name: "Hero", href: "/dashboard/hero-section", icon: User },
+	{ name: "controls", href: "/dashboard/controls", icon: User },
 	{ name: "Projects", href: "/dashboard/projects", icon: Briefcase },
 	{ name: "Messages", href: "/dashboard/messages", icon: Mail },
 	{ name: "Settings", href: "/dashboard/settings", icon: Settings },
@@ -138,20 +138,6 @@ export function Sidebar() {
 									</Button>
 								</div>
 							</div>
-
-							{/* <div className='absolute bottom-8 left-6 right-6'>
-								<Button
-									variant='secondary'
-									className='w-full rounded-2xl h-14 font-bold'
-									onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-									{theme === "dark" ? (
-										<Sun className='mr-2' size={20} />
-									) : (
-										<Moon className='mr-2' size={20} />
-									)}
-									Appearance
-								</Button>
-							</div> */}
 						</div>
 					</SheetContent>
 				</Sheet>

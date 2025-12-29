@@ -1,10 +1,8 @@
 /** @format */
+import { getPublishedProjects } from "@/app/data";
 
-import { getFeaturedProjects } from "@/app/data";
-import { ProjectsDashboard } from "./projects-control";
-
-export default async function ProjectsControlPage() {
-	const rawProjects = await getFeaturedProjects();
+export default async function BlogsControlPage() {
+	const rawProjects = await getPublishedProjects();
 
 	// Transform DB data to Form-friendly data
 
@@ -21,7 +19,7 @@ export default async function ProjectsControlPage() {
 
 			<div className='grid grid-cols-1  '>
 				<div className=''>
-					<ProjectsDashboard projects={rawProjects} />{" "}
+					{/* <ProjectsDashboard projects={rawProjects} />{" "} */}
 				</div>
 			</div>
 		</div>

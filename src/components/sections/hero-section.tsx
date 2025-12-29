@@ -55,6 +55,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 	// 3. Centralized profile data with defaults
 	const profile = useMemo(
 		() => ({
+			greeting: data?.greeting || "HI I'm",
 			name: data?.name || "Mohammed Yaseen",
 			role: data?.role || "Full-Stack Developer & AI Researcher",
 			description:
@@ -102,7 +103,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 	};
 
 	const statusStyle = STATUS_CONFIG[profile.status] || STATUS_CONFIG.DEFAULT;
-
+	const roles = profile.role.split("&&");
 	return (
 		<section
 			id='hero'
@@ -161,20 +162,28 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 								</motion.span>
 							</motion.div>
 
-							<h1 className='text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1]'>
-								Hi, I am{" "}
-								<span className='text-transparent capitalize bg-clip-text bg-linear-to-r from-primary to-blue-600'>
+							<h1 className='text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight'>
+								{profile.greeting}{" "}
+								<span className='text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600 capitalize'>
 									{profile.name}
 								</span>
 							</h1>
 
-							<h2 className='text-2xl md:text-3xl font-semibold text-muted-foreground'>
-								{profile.role}
-							</h2>
+							<motion.h2
+								initial={{ opacity: 0, y: 8 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.4, ease: "easeOut" }}
+								className='mt-6 text-xl md:text-2xl lg:text-3xl font-medium text-muted-foreground pl-5'>
+								{profile.role.split("&&").join(" • ")}
+							</motion.h2>
 
-							<p className='text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed italic border-l-4 border-primary/40 pl-6'>
-								"{profile.description}"
-							</p>
+							<motion.p
+								initial={{ opacity: 0, y: 6 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.15, duration: 0.4 }}
+								className='mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed border-l-2 border-primary/30 pl-5 italic'>
+								“{profile.description}”
+							</motion.p>
 						</div>
 
 						{/* CTA Buttons */}
