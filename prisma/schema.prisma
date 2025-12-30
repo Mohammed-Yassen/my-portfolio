@@ -212,14 +212,26 @@ model Experience {
 }
 
 model Education {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   institution  String
   degree       String
   fieldOfStudy String
   startDate    DateTime
-  endDate      DateTime
+  endDate      DateTime?
   grade        String?
-  description  String?  @db.Text
+  description  String?   @db.Text
+}
+
+model Certification {
+  id           String   @id @default(cuid())
+  title        String
+  issuer       String
+  issueDate    String // Keeping as string per your request (e.g., "Jan 2024")
+  imageUrl     String? // For the certificate badge/icon
+  credentialId String?
+  link         String? // External link to verify
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Technique {
@@ -496,15 +508,6 @@ model SiteConfig {
 //   is_featured  Boolean
 
 //   createdAt DateTime @default(now())
-// }
-
-// model Certification {
-//   id           String  @id @default(cuid())
-//   title        String
-//   issuer       String
-//   issueDate    String
-//   credentialId String?
-//   link         String?
 // }
 
 // model SiteConfig {

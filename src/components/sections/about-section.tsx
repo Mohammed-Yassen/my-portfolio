@@ -66,9 +66,9 @@ export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 			<div className='absolute -top-24 -right-24 size-125 bg-primary/5 blur-[120px] rounded-full -z-10' />
 
 			<div className='container mx-auto px-6 relative z-10'>
-				<div className='flex flex-col lg:flex-row gap-16 lg:gap-24'>
+				<div className='flex flex-col lg:flex-row gap-12 lg:gap-24'>
 					{/* LEFT CONTENT: Sticky Header & Statistics */}
-					<div className='lg:w-[45%] lg:sticky lg:top-24 h-fit'>
+					<div className='lg:w-[50%] lg:sticky lg:top-24 h-fit'>
 						<motion.div
 							initial={{ opacity: 0, x: -20 }}
 							whileInView={{ opacity: 1, x: 0 }}
@@ -101,7 +101,7 @@ export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 							</p>
 
 							{/* Stats Grid */}
-							<div className='grid grid-cols-2 gap-8 pt-10'>
+							<div className='grid grid-cols-2 gap-8 pt-10 px-4'>
 								{aboutData?.statuses?.map((status: any) => (
 									<div key={status.id} className='relative group'>
 										<div className='flex items-center gap-2 mb-2'>
@@ -114,7 +114,7 @@ export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 											/>
 										</div>
 										<div className='flex items-baseline'>
-											<span className='text-5xl font-bold tracking-tighter tabular-nums transition-colors group-hover:text-primary'>
+											<span className='text-3xl font-bold tracking-tighter tabular-nums transition-colors group-hover:text-primary'>
 												{status.value}
 											</span>
 										</div>
@@ -125,7 +125,7 @@ export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 					</div>
 
 					{/* RIGHT CONTENT: Pillar Cards with Hover & Parallax */}
-					<div className='lg:w-[55%] space-y-8'>
+					<div className='lg:w-[45%] space-y-8'>
 						{aboutData?.corePillars?.map((pillar: any, idx: number) => {
 							const Icon = ICON_MAP[pillar.icon] || Sparkles;
 							return (
@@ -136,7 +136,7 @@ export const AboutSection = ({ aboutData }: AboutSectionFieldsProps) => {
 									<div className='absolute -inset-px bg-linear-to-r from-transparent via-border to-transparent rounded-4xl opacity-50 group-hover:via-primary/50 transition-all duration-500' />
 
 									<div className='relative bg-card/50 backdrop-blur-sm border border-border/40 hover:bg-card transition-all duration-500 rounded-4xl p-4 md:p-6'>
-										<div className='flex flex-col sm:flex-row gap-4 items-start'>
+										<div className='flex gap-4 items-start'>
 											{/* Technical Icon Wrapper */}
 											<div className='relative shrink-0'>
 												<div className='absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700' />

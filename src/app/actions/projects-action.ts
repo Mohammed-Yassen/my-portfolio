@@ -53,8 +53,7 @@ export async function createProject(values: ProjectFormValues) {
 			},
 		});
 
-		revalidatePath("/");
-		revalidatePath("/dashboard/projects");
+		revalidatePaths();
 		return { success: "Project created successfully!", data: project };
 	} catch (error: any) {
 		console.error("CREATE_PROJECT_ERROR:", error);
@@ -95,8 +94,7 @@ export async function updateProject(id: string, values: ProjectFormValues) {
 		});
 
 		// Targeted revalidation
-		revalidatePath("/");
-		revalidatePath("/dashboard/projects");
+		revalidatePaths();
 		revalidatePath(`/projects/${rest.slug}`);
 
 		return { success: "Project updated successfully!" };
@@ -114,13 +112,16 @@ export async function deleteProject(id: string) {
 		// Find project first to get slug for cache clearing if necessary
 		const project = await db.project.delete({ where: { id } });
 
-		revalidatePath("/dashboard/projects");
+		revalidatePaths();
 		revalidatePath(`/projects/${project.slug}`);
-		revalidatePath("/");
 
 		return { success: "Project removed permanently." };
 	} catch (error) {
 		console.error("DELETE_PROJECT_ERROR:", error);
 		return { error: "Unable to delete project." };
 	}
+}
+function revalidatePaths() {
+	revalidatePath("/dashboard/projects");
+	revalidatePath("/");
 }

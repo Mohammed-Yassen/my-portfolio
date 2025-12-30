@@ -2,32 +2,19 @@
 
 "use client";
 
+import { SkillCategoryWithSkills } from "@/type";
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 
-interface Skill {
-	id: string;
-	name: string;
-	level: number;
-	isVisible: boolean;
-}
-
-interface SkillCategory {
-	id: string;
-	title: string;
-	icon: string;
-	skills: Skill[];
-}
-
 interface SkillsSectionProps {
-	data: SkillCategory[];
+	data: SkillCategoryWithSkills[];
 }
 
 // Helper to determine color based on skill level
-const getLevelColor = (level: number) => {
-	if (level >= 90) return "from-emerald-500 to-teal-400"; // Expert
-	if (level >= 70) return "from-blue-500 to-cyan-400"; // Advanced
-	if (level >= 50) return "from-amber-500 to-orange-400"; // Intermediate
+const getLevelColor = (level: number | null) => {
+	if (level && level >= 90) return "from-emerald-500 to-teal-400"; // Expert
+	if (level && level >= 70) return "from-blue-500 to-cyan-400"; // Advanced
+	if (level && level >= 50) return "from-amber-500 to-orange-400"; // Intermediate
 	return "from-rose-500 to-pink-400"; // Beginner
 };
 
@@ -50,7 +37,7 @@ export const SkillsSection = ({ data }: SkillsSectionProps) => {
 				</div>
 
 				{/* Responsive Grid: Auto-fills based on available width */}
-				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6'>
+				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-6'>
 					{data.map((category, catIndex) => {
 						const IconComponent =
 							(LucideIcons as any)[category.icon] || LucideIcons.Layers;
@@ -78,40 +65,37 @@ export const SkillsSection = ({ data }: SkillsSectionProps) => {
 
 								{/* Skill Bars */}
 								<div className='space-y-5 grow'>
-									{category.skills
-										.filter((s) => s.isVisible)
-										.sort((a, b) => b.level - a.level) // Show highest skills first
-										.map((skill, skillIndex) => (
-											<div key={skill.id} className='group/skill'>
-												<div className='flex justify-between items-center mb-1.5'>
-													<span className='text-sm font-medium text-muted-foreground group-hover/skill:text-foreground transition-colors'>
-														{skill.name}
-													</span>
-													<span className='text-[10px] font-mono font-bold opacity-0 group-hover/skill:opacity-100 transition-opacity'>
-														{skill.level}%
-													</span>
-												</div>
-
-												{/* Track */}
-												<div className='h-1 w-full bg-muted rounded-full overflow-hidden'>
-													{/* Progress with Spring Animation */}
-													<motion.div
-														initial={{ width: 0 }}
-														whileInView={{ width: `${skill.level}%` }}
-														viewport={{ once: true }}
-														transition={{
-															type: "spring",
-															bounce: 0,
-															duration: 1.5,
-															delay: 0.2 + skillIndex * 0.1,
-														}}
-														className={`h-full rounded-full bg-gradient-to-r ${getLevelColor(
-															skill.level,
-														)}`}
-													/>
-												</div>
+									{category.skills.map((skill, skillIndex) => (
+										<div key={skill.id} className='group/skill'>
+											<div className='flex justify-between items-center mb-1.5'>
+												<span className='text-sm font-medium text-muted-foreground group-hover/skill:text-foreground transition-colors'>
+													{skill.name}
+												</span>
+												<span className='text-[10px] font-mono font-bold opacity-0 group-hover/skill:opacity-100 transition-opacity'>
+													{skill.level}%
+												</span>
 											</div>
-										))}
+
+											{/* Track */}
+											<div className='h-1 w-full bg-muted rounded-full overflow-hidden'>
+												{/* Progress with Spring Animation */}
+												<motion.div
+													initial={{ width: 0 }}
+													whileInView={{ width: `${skill.level}%` }}
+													viewport={{ once: true }}
+													transition={{
+														type: "spring",
+														bounce: 0,
+														duration: 1.5,
+														delay: 0.2 + skillIndex * 0.1,
+													}}
+													className={`h-full rounded-full bg-linear-to-r ${getLevelColor(
+														skill?.level,
+													)}`}
+												/>
+											</div>
+										</div>
+									))}
 								</div>
 							</motion.div>
 						);

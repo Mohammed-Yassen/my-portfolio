@@ -150,6 +150,7 @@ export async function createExperienceAction(values: any) {
 	}
 }
 
+//
 export async function updateExperienceAction(id: string, values: any) {
 	const validated = experienceSchema.safeParse(values);
 	if (!validated.success) return { error: "Invalid data" };
@@ -224,3 +225,98 @@ export async function deleteEducationAction(id: string) {
 		return { success: false };
 	}
 }
+//
+
+import {
+	CertificationSchema,
+	CertificationFormValues,
+} from "@/lib/validations";
+
+// GET ALL
+
+// CREATE
+type ActionResponse<T = any> = {
+	success: boolean;
+	data?: T;
+	error?: string;
+};
+
+// CREATE
+export async function createCertification(
+	values: CertificationFormValues,
+): Promise<ActionResponse> {
+	try {
+		// 1. Validate Input
+		const validated = CertificationSchema.safeParse(values);
+
+		if (!validated.success) {
+			return {
+				success: false,
+				error: "Invalid fields: " + validated.error.flatten().fieldErrors,
+			};
+		}
+
+		// 2. Database Operation
+		const cert = await db.certification.create({
+			data: validated.data,
+		});
+
+		// 3. Revalidate and Return
+		revalidatePath("/");
+		return { success: true, data: cert };
+	} catch (error) {
+		console.error("[CREATE_CERTIFICATION_ERROR]:", error);
+		return { success: false, error: "Failed to create certification record." };
+	}
+}
+
+// UPDATE
+export async function updateCertification(
+	id: string,
+	values: CertificationFormValues,
+): Promise<ActionResponse> {
+	try {
+		if (!id) return { success: false, error: "Certification ID is required." };
+
+		// 1. Validate Input
+		const validated = CertificationSchema.safeParse(values);
+
+		if (!validated.success) {
+			return { success: false, error: "Validation failed." };
+		}
+
+		// 2. Database Operation
+		const cert = await db.certification.update({
+			where: { id },
+			data: validated.data,
+		});
+
+		revalidatePath("/");
+		return { success: true, data: cert };
+	} catch (error) {
+		console.error("[UPDATE_CERTIFICATION_ERROR]:", error);
+		return {
+			success: false,
+			error: "Failed to update record. It might not exist.",
+		};
+	}
+}
+
+// DELETE
+export async function deleteCertification(id: string): Promise<ActionResponse> {
+	try {
+		if (!id) return { success: false, error: "ID is required." };
+
+		await db.certification.delete({
+			where: { id },
+		});
+
+		revalidatePath("/");
+		return { success: true };
+	} catch (error) {
+		console.error("[DELETE_CERTIFICATION_ERROR]:", error);
+		return { success: false, error: "Could not delete the record." };
+	}
+}
+
+//

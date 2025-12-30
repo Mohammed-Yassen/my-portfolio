@@ -92,18 +92,9 @@ export const aboutSchema = z.object({
 });
 
 // --- 3. BLOG SYSTEM ---
-export const blogSchema = z.object({
-	title: z.string().min(5, "Title is too short"),
-	slug: z.string().min(2, "Slug is required"),
-	category: z.string().default("General"),
-	excerpt: z.string().max(250, "Excerpt is too long"),
-	content: z.string().min(50, "Content is too short"),
-	image: z.string().url("Cover image required"),
-	gallery: z.array(z.string().url()).default([]),
-	readTime: z.string().nullable().default("5 min"),
-	isPublished: z.boolean().default(false),
-	tags: z.array(z.string()).min(1, "Add at least one tag"),
-});
+/** @format */
+
+// Types for Data Fetching
 
 export const commentSchema = z.object({
 	name: z.string().min(1, "Name is required"),
@@ -191,6 +182,31 @@ export const siteConfigSchema = z.object({
 	metaDescription: z.string().optional().nullable(),
 });
 
+export const CertificationSchema = z.object({
+	title: z.string().min(2, "Title must be at least 2 characters"),
+	issuer: z.string().min(2, "Issuer is required"),
+	issueDate: z.string().min(1, "Issue date is required"),
+	imageUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
+	credentialId: z.string().optional().or(z.literal("")),
+	link: z.string().url("Invalid credential link").optional().or(z.literal("")),
+});
+// Zod Schema for Form Validation
+export const blogSchema = z.object({
+	title: z.string().min(5, "Title is too short"),
+	slug: z.string().min(2, "Slug is required"),
+	category: z.string().min(1, "Category is required").default("General"),
+	excerpt: z.string().max(250, "Excerpt is too long"),
+	content: z.string().min(50, "Content is too short"),
+	image: z.string().url("Cover image required"),
+	gallery: z.array(z.string().url()).default([]),
+	readTime: z.string().nullable().default("5 min"),
+	isPublished: z.boolean().default(false),
+	tags: z.array(tagSchema).default([]),
+	publishedAt: z
+		.date()
+		.optional()
+		.default(() => new Date()),
+});
 // --- EXPORTED TYPES ---
 export type HeroFormValues = z.infer<typeof heroSchema>;
 // export type IdentityFormValues = z.infer<typeof identitySchema>;
@@ -205,3 +221,4 @@ export type SkillCategoryFormValues = z.infer<typeof skillCategorySchema>;
 export type TestimonialFormValues = z.infer<typeof testimonialSchema>;
 export type ContactMessageValues = z.infer<typeof contactMessageSchema>;
 export type SiteConfigValues = z.infer<typeof siteConfigSchema>;
+export type CertificationFormValues = z.infer<typeof CertificationSchema>;

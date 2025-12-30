@@ -50,7 +50,7 @@ import { ProjectFormValues, projectSchema } from "@/lib/validations";
 import { UploadButton } from "@/utils/uploadthing";
 import { createProject, updateProject } from "@/app/actions/projects-action";
 import { IconPicker } from "@/components/dashboard/icon-picker";
-import { FormFieldWrapper } from "../../input-form-wrapper";
+import { FormFieldWrapper } from "@/components/input-form-wrapper";
 
 // --- Type-Safe Form Field Wrapper ---
 

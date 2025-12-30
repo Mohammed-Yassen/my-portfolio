@@ -2,12 +2,13 @@
 import { SkillsSection } from "@/components/sections/skills-section";
 import {
 	AboutLoader,
+	CertificationsLoader,
+	ExperianceAndEducationLoader,
 	HeroLoader,
 	ProjectsLoader,
 	SkillsLoader,
 } from "./loaders";
 import { ProjectsSection } from "@/components/sections/projects-section";
-import { ExperienceSection } from "@/components/sections/experience-section";
 import { CertificationsSection } from "@/components/sections/certification-section";
 import { BlogSection } from "@/components/sections/blog-section";
 import { ContactSectionForm } from "@/components/sections/contact-section";
@@ -31,8 +32,10 @@ export default function Home() {
 			<SkillsLoader />
 			<ProjectsLoader />
 			{/* <ProjectsSection /> */}
-			<ExperienceSection />
-			<CertificationsSection />
+			<ExperianceAndEducationLoader />
+
+			{/*  */}
+			<CertificationsLoader />
 			<BlogSection />
 			<ContactSectionForm />
 			<Footer />

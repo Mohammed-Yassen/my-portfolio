@@ -17,6 +17,7 @@ import {
 	Command,
 	Menu,
 	ArrowUpRight,
+	DockIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const menuItems = [
 	{ name: "Overview", href: "/dashboard", icon: LayoutDashboard },
 	{ name: "controls", href: "/dashboard/controls", icon: User },
 	{ name: "Projects", href: "/dashboard/projects", icon: Briefcase },
+	{ name: "Blogs", href: "/dashboard/blogs-control", icon: DockIcon },
 	{ name: "Messages", href: "/dashboard/messages", icon: Mail },
 	{ name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

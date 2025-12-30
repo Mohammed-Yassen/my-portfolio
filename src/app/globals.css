@@ -115,3 +115,39 @@
 section {
   scroll-margin-top: 5rem;
 }
+/* Styling for Tiptap Code Blocks */
+.ProseMirror pre {
+  background: #09090b;
+  /* zinc-950 */
+  color: #e4e4e7;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  border: 1px solid #27272a;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.ProseMirror pre code {
+  background: none;
+  color: inherit;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+/* Syntax Highlighting Colors (Lowlight) */
+.hljs-keyword {
+  color: #c678dd;
+}
+
+.hljs-string {
+  color: #98c379;
+}
+
+.hljs-function {
+  color: #61afef;
+}
+
+.hljs-comment {
+  color: #5c6370;
+  /* italic; */
+}

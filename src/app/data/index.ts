@@ -2,7 +2,7 @@
 import { db } from "@/lib/db/db";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { HeroSection, Testimonial } from "@prisma/client";
+import { Certification, HeroSection, Testimonial } from "@prisma/client";
 import {
 	BlogWithRelations,
 	FullAboutSection,
@@ -155,3 +155,60 @@ export async function getEducation() {
 		return [];
 	}
 }
+
+type ActionResponse<T = Certification[]> = {
+	success: boolean;
+	data?: T;
+	error?: string;
+};
+
+// GET ALL
+export async function getCertifications(): Promise<ActionResponse> {
+	try {
+		const data = await db.certification.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+
+		// FIX: You must actually return the data you fetched
+		return {
+			success: true,
+			data: data,
+		};
+	} catch (error) {
+		console.error("DB_FETCH_CERT_ERROR:", error);
+		// FIX: Must return an object, not an array [], to match ActionResponse
+		return {
+			success: false,
+			error: "Failed to fetch certifications.",
+		};
+	}
+}
+type ActionResp<T = Certification> = {
+	success: boolean;
+	data?: T;
+	error?: string;
+};
+// GET SINGLE
+export async function getCertificationById(id: string): Promise<ActionResp> {
+	try {
+		if (!id) return { success: false, error: "ID is required" };
+
+		const cert = await db.certification.findUnique({
+			where: { id },
+		});
+
+		if (!cert) return { success: false, error: "Certification not found" };
+
+		return {
+			success: true,
+			data: cert,
+		};
+	} catch (error) {
+		console.error("DB_FETCH_SINGLE_CERT_ERROR:", error);
+		return {
+			success: false,
+			error: "An error occurred while fetching the record.",
+		};
+	}
+}
+// src/lib/queries/blogs.ts

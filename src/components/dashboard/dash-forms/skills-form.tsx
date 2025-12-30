@@ -9,7 +9,6 @@ import {
 	X,
 	LayoutGrid,
 	Sparkles,
-	Circle,
 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -17,14 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as Icons from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -37,7 +29,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-// Import your specific schemas and actions
+// Import your custom wrapper
+
 import {
 	skillCategorySchema,
 	type SkillCategoryFormValues,
@@ -45,13 +38,13 @@ import {
 import {
 	deleteSkillCategoryAction,
 	upsertSkillCategoryAction,
-	// deleteSkillCategoryAction,
 } from "@/app/actions";
 import { IconPicker } from "../icon-picker";
+import { FormFieldWrapper } from "@/components/input-form-wrapper";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
 interface Props {
-	initialData: any[]; // Ideally SkillCategoryWithSkills[]
+	initialData: any[];
 }
 
 export function SkillCategoryForm({ initialData }: Props) {
@@ -119,18 +112,8 @@ export function SkillCategoryForm({ initialData }: Props) {
 		});
 	};
 
-	const onDelete = async (id: string) => {
-		if (!confirm("Delete this category and all its skills?")) return;
-		startTransition(async () => {
-			const result = await deleteSkillCategoryAction(id);
-			if (result.success) toast.success("Category deleted");
-			else toast.error("Delete failed");
-		});
-	};
-
 	return (
 		<div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
-			{/* --- LEFT SIDE: THE FORM CARD --- */}
 			<div className='lg:col-span-5 space-y-4'>
 				<Card
 					className={`border-2 transition-all ${
@@ -159,44 +142,33 @@ export function SkillCategoryForm({ initialData }: Props) {
 								onSubmit={form.handleSubmit(onSubmit)}
 								className='space-y-6'>
 								<div className='grid grid-cols-1 gap-4'>
-									<FormField
+									<FormFieldWrapper
 										control={form.control}
 										name='title'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Category Name</FormLabel>
-												<FormControl>
-													<Input placeholder='e.g. Frontend Tools' {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+										label='Category Name'>
+										{(field) => (
+											<Input placeholder='e.g. Frontend Tools' {...field} />
 										)}
-									/>
-									<FormField
+									</FormFieldWrapper>
+
+									<FormFieldWrapper
 										control={form.control}
 										name='icon'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Icon</FormLabel>
-												<FormControl>
-													<IconPicker
-														value={field.value}
-														onChange={field.onChange}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+										label='Icon'>
+										{(field) => (
+											<IconPicker
+												value={field.value}
+												onChange={field.onChange}
+											/>
 										)}
-									/>
+									</FormFieldWrapper>
 								</div>
 
 								<Separator className='my-4' />
 
 								<div className='space-y-3'>
 									<div className='flex items-center justify-between'>
-										<FormLabel className='text-sm font-semibold'>
-											Skills List
-										</FormLabel>
+										<label className='text-sm font-semibold'>Skills List</label>
 										<Button
 											type='button'
 											variant='outline'
@@ -208,7 +180,7 @@ export function SkillCategoryForm({ initialData }: Props) {
 										</Button>
 									</div>
 
-									<div className='space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar'>
+									<div className='space-y-3 overflow-y-auto pr-2 custom-scrollbar'>
 										{fields.map((field, index) => (
 											<div
 												key={field.id}
@@ -222,23 +194,22 @@ export function SkillCategoryForm({ initialData }: Props) {
 												</Button>
 
 												<div className='grid grid-cols-1 gap-2'>
-													<FormField
+													<FormFieldWrapper
 														control={form.control}
-														name={`skills.${index}.name`}
-														render={({ field }) => (
-															<FormControl>
-																<Input
-																	className='h-8'
-																	placeholder='Skill (e.g. React)'
-																	{...field}
-																/>
-															</FormControl>
+														name={`skills.${index}.name`}>
+														{(field) => (
+															<Input
+																className='h-8'
+																placeholder='Skill (e.g. React)'
+																{...field}
+															/>
 														)}
-													/>
-													<FormField
+													</FormFieldWrapper>
+
+													<FormFieldWrapper
 														control={form.control}
-														name={`skills.${index}.level`}
-														render={({ field }) => (
+														name={`skills.${index}.level`}>
+														{(field) => (
 															<div className='px-1'>
 																<div className='flex justify-between text-[10px] uppercase font-bold text-zinc-500 mb-1'>
 																	<span>Proficiency</span>
@@ -252,21 +223,11 @@ export function SkillCategoryForm({ initialData }: Props) {
 																/>
 															</div>
 														)}
-													/>
+													</FormFieldWrapper>
 												</div>
 											</div>
 										))}
-										{fields.length === 0 && (
-											<p className='text-xs text-center text-muted-foreground py-4'>
-												No skills added yet.
-											</p>
-										)}
 									</div>
-									{form.formState.errors.skills && (
-										<p className='text-destructive text-xs'>
-											{form.formState.errors.skills.message}
-										</p>
-									)}
 								</div>
 
 								<div className='flex gap-2 pt-2'>
@@ -291,7 +252,7 @@ export function SkillCategoryForm({ initialData }: Props) {
 				</Card>
 			</div>
 
-			{/* --- RIGHT SIDE: DATA LIST --- */}
+			{/* RIGHT SIDE: DATA LIST */}
 			<div className='lg:col-span-7 space-y-4'>
 				<div className='grid grid-cols-1 gap-3'>
 					{initialData.length === 0 && (
@@ -338,7 +299,14 @@ export function SkillCategoryForm({ initialData }: Props) {
 											variant='outline'
 											size='icon'
 											className='h-8 w-8 text-destructive hover:bg-destructive/10'
-											onClick={() => onDelete(cat.id)}>
+											onClick={() => {
+												if (confirm("Delete category?")) {
+													startTransition(async () => {
+														const res = await deleteSkillCategoryAction(cat.id);
+														if (res.success) toast.success("Deleted");
+													});
+												}
+											}}>
 											<Trash2 className='h-3.5 w-3.5' />
 										</Button>
 									</div>

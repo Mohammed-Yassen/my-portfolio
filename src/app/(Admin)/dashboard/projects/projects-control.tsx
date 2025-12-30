@@ -4,8 +4,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FolderOpen, Pencil, Plus, Trash2 } from "lucide-react";
-import ProjectForm from "@/components/dashboard/dash-forms/project-form";
+
 import { deleteProject } from "@/app/actions/projects-action";
+import ProjectForm from "./project-form";
 
 export function ProjectsDashboard({
 	projects: initialProjects,

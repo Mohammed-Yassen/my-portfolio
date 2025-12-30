@@ -61,7 +61,7 @@ export function IconPicker({
 					</div>
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='w-75 p-2'>
+			<PopoverContent className='w-75 p-2  bg-white dark:bg-zinc-800 '>
 				<Input
 					placeholder='Search icons...'
 					value={search}
