@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ExternalLink, Github, ArrowRight, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Project } from "@/type/projects-type";
+import { Project } from "@/types/projects-type";
 
 export const ProjectCard = ({ project }: { project: Project }) => {
 	return (

@@ -23,11 +23,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { AboutFormValues, aboutSchema } from "@/lib/validations";
-import { FullAboutSection } from "@/type";
+import { FullAboutSection } from "@/types";
 import { FormFieldWrapper } from "@/components/input-form-wrapper";
 import { IconPicker } from "../icon-picker";
 import { cn } from "@/lib/utils";
-import { updateAboutAction } from "@/app/actions";
+import { updateAboutAction } from "@/actions";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
 interface AboutSectionFieldsProps {
@@ -290,13 +290,14 @@ export const AboutSectionFields = ({ aboutData }: AboutSectionFieldsProps) => {
 				</section>
 
 				{/* FLOATING ACTION CONSOLE */}
-				<div className='fixed bottom-10 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-6'>
+				<div className='fixed bottom-10 right-0  z-50 w-full max-w-md px-6'>
 					<div className='relative group'>
-						<div className='absolute -inset-1 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500'></div>
+						<div className='absolute -inset-1  rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500'></div>
 						<Button
 							disabled={isPending}
 							type='submit'
-							className='relative w-full h-16 rounded-2xl bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-black text-lg shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 overflow-hidden border-none'>
+							size='lg'
+							className='relative rounded-2xl bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-black text-lg shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 overflow-hidden border-none'>
 							{isPending ? (
 								<Loader2 className='animate-spin' size={24} />
 							) : (

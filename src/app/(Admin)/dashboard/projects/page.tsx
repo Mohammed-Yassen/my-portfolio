@@ -1,6 +1,6 @@
 /** @format */
 
-import { getFeaturedProjects } from "@/app/data";
+import { getFeaturedProjects } from "@/data";
 import { ProjectsDashboard } from "./projects-control";
 
 export default async function ProjectsControlPage() {

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FormFieldWrapper } from "@/components/input-form-wrapper";
 
 import { educationSchema, EducationFormValues } from "@/lib/validations";
-import { createEducationAction } from "@/app/actions";
+import { createEducationAction } from "@/actions";
 
 interface EducationFieldsProps {
 	initialData?: any; // The specific education record or null for "New"

@@ -157,13 +157,21 @@ export const skillCategorySchema = z.object({
 });
 
 export const testimonialSchema = z.object({
-	clientName: z.string().min(1),
-	clientTitle: z.string().min(1),
-	content: z.string().min(10),
-	avatarUrl: z.string().url(),
-	linkedinUrl: z.string().url().or(z.literal("")).nullable().optional(),
-	isFeatured: z.boolean().default(false),
-	isActive: z.boolean().default(true),
+	clientName: z.string().min(2, "Name is required"),
+	clientTitle: z.string().min(2, "Title is required (e.g., Founder)"),
+	role: z
+		.string()
+		.min(2, "Role is required (e.g., CEO at TechCorp)")
+		.optional(),
+	content: z.string().min(10, "Please share a bit more about your experience"),
+	rating: z.number().min(1).max(5).default(5),
+	email: z.string().email("Invalid email").optional().or(z.literal("")),
+	avatarUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
+	linkedinUrl: z
+		.string()
+		.url("Invalid LinkedIn URL")
+		.optional()
+		.or(z.literal("")),
 });
 
 export const contactMessageSchema = z.object({

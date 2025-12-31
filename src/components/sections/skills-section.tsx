@@ -2,7 +2,7 @@
 
 "use client";
 
-import { SkillCategoryWithSkills } from "@/type";
+import { SkillCategoryWithSkills } from "@/types";
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 

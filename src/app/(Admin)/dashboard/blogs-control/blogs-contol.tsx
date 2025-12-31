@@ -14,7 +14,7 @@ import {
 	Clock,
 	X,
 } from "lucide-react";
-import { deleteBlogAction } from "@/app/actions/blogs-actions";
+import { deleteBlogAction } from "@/actions/blogs-actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -61,8 +61,51 @@ export function BlogsDashboard({ blogs }: { blogs: any[] }) {
 			</div>
 
 			<div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
+				{/* Right: Form Area */}
+				<div className='lg:col-span-12'>
+					{isCreating || selectedBlog ? (
+						<Card className='border-none shadow-xl bg-white dark:bg-zinc-900 overflow-hidden'>
+							<div className='p-4 border-b flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-800/20'>
+								<h2 className='font-bold flex items-center gap-2'>
+									{isCreating ? (
+										<Plus className='w-5 h-5 text-primary' />
+									) : (
+										<Pencil className='w-5 h-5 text-primary' />
+									)}
+									{isCreating ? "Draft New Post" : "Edit Post"}
+								</h2>
+								<Button
+									variant='ghost'
+									size='icon'
+									onClick={() => {
+										setIsCreating(false);
+										setSelectedBlog(null);
+									}}>
+									<X className='w-4 h-4' />
+								</Button>
+							</div>
+							<BlogForm
+								key={selectedBlog?.id || "new"}
+								initialData={selectedBlog}
+								onSuccess={() => {
+									setIsCreating(false);
+									setSelectedBlog(null);
+								}}
+							/>
+						</Card>
+					) : (
+						<div className='h-100 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl text-muted-foreground space-y-4'>
+							<div className='p-4 bg-zinc-100 dark:bg-zinc-800 rounded-full'>
+								<FileText className='w-10 h-10' />
+							</div>
+							<p className='font-medium'>
+								Select an article to edit or create a new one
+							</p>
+						</div>
+					)}
+				</div>
 				{/* Left: Blog List */}
-				<div className='lg:col-span-5 space-y-4'>
+				<div className='lg:col-span-12 space-y-4'>
 					<div className='relative'>
 						<Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground' />
 						<Input
@@ -121,50 +164,6 @@ export function BlogsDashboard({ blogs }: { blogs: any[] }) {
 							</Card>
 						))}
 					</div>
-				</div>
-
-				{/* Right: Form Area */}
-				<div className='lg:col-span-7'>
-					{isCreating || selectedBlog ? (
-						<Card className='border-none shadow-xl bg-white dark:bg-zinc-900 overflow-hidden'>
-							<div className='p-4 border-b flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-800/20'>
-								<h2 className='font-bold flex items-center gap-2'>
-									{isCreating ? (
-										<Plus className='w-5 h-5 text-primary' />
-									) : (
-										<Pencil className='w-5 h-5 text-primary' />
-									)}
-									{isCreating ? "Draft New Post" : "Edit Post"}
-								</h2>
-								<Button
-									variant='ghost'
-									size='icon'
-									onClick={() => {
-										setIsCreating(false);
-										setSelectedBlog(null);
-									}}>
-									<X className='w-4 h-4' />
-								</Button>
-							</div>
-							<BlogForm
-								key={selectedBlog?.id || "new"}
-								initialData={selectedBlog}
-								onSuccess={() => {
-									setIsCreating(false);
-									setSelectedBlog(null);
-								}}
-							/>
-						</Card>
-					) : (
-						<div className='h-100 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl text-muted-foreground space-y-4'>
-							<div className='p-4 bg-zinc-100 dark:bg-zinc-800 rounded-full'>
-								<FileText className='w-10 h-10' />
-							</div>
-							<p className='font-medium'>
-								Select an article to edit or create a new one
-							</p>
-						</div>
-					)}
 				</div>
 			</div>
 		</div>

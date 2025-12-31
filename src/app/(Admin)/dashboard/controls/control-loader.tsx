@@ -7,7 +7,7 @@ import {
 	getExperiences,
 	getAllTechniques,
 	getCertifications,
-} from "@/app/data";
+} from "@/data";
 
 import { HeroSectionFields } from "@/components/dashboard/dash-forms/hero-form-fields";
 import { AboutSectionFields } from "@/components/dashboard/dash-forms/about-form-fields";

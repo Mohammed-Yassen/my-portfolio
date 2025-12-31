@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Certification } from "@prisma/client";
 
 import { toast } from "sonner";
-import { deleteCertification } from "@/app/actions";
+import { deleteCertification } from "@/actions";
 import { CertificationSectionFields } from "./certification-section-fields";
 
 export const CertificationManager = ({

@@ -2,7 +2,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { db } from "@/lib/db/db";
+import { db } from "@/lib/db";
 import {
 	heroSchema,
 	aboutSchema,

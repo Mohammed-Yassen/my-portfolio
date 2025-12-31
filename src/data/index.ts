@@ -1,5 +1,5 @@
 /** @format */
-import { db } from "@/lib/db/db";
+import { db } from "@/lib/db";
 import { unstable_noStore as noStore } from "next/cache";
 
 import { Certification, HeroSection, Testimonial } from "@prisma/client";
@@ -8,7 +8,7 @@ import {
 	FullAboutSection,
 	ProjectWithRelations,
 	SkillCategoryWithSkills,
-} from "@/type";
+} from "@/types";
 
 // --- HERO SECTION ---
 export async function getHeroData(): Promise<HeroSection | null> {
@@ -212,3 +212,22 @@ export async function getCertificationById(id: string): Promise<ActionResp> {
 	}
 }
 // src/lib/queries/blogs.ts
+/** @format */
+
+export async function getTestimonialData() {
+	try {
+		const testimonials = await db.testimonial.findMany({
+			where: {
+				isActive: true, // Only show approved ones
+			},
+			orderBy: [
+				{ isFeatured: "desc" }, // Featured reviews on top
+				{ createdAt: "desc" }, // Newest reviews next
+			],
+		});
+		return testimonials;
+	} catch (error) {
+		console.error("Database Error:", error);
+		return null; // Return null to trigger the ErrorBox in the loader
+	}
+}

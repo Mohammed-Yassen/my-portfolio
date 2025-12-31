@@ -48,7 +48,7 @@ import {
 } from "@/components/ui/select";
 import { ProjectFormValues, projectSchema } from "@/lib/validations";
 import { UploadButton } from "@/utils/uploadthing";
-import { createProject, updateProject } from "@/app/actions/projects-action";
+import { createProject, updateProject } from "@/actions/projects-action";
 import { IconPicker } from "@/components/dashboard/icon-picker";
 import { FormFieldWrapper } from "@/components/input-form-wrapper";
 

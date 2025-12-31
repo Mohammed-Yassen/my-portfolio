@@ -28,7 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { HeroSection } from "@prisma/client";
 import { HeroFormValues, heroSchema } from "@/lib/validations";
-import { updateHeroAction } from "@/app/actions";
+import { updateHeroAction } from "@/actions";
 import { FormFieldWrapper } from "@/components/input-form-wrapper";
 import { UploadButton } from "@/utils/uploadthing";
 import { cn } from "@/lib/utils";

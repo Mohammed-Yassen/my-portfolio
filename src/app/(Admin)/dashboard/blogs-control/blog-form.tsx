@@ -19,10 +19,7 @@ import {
 } from "lucide-react";
 
 import { blogSchema, type BlogFormValues } from "@/lib/validations";
-import {
-	createBlogAction,
-	updateBlogAction,
-} from "@/app/actions/blogs-actions";
+import { createBlogAction, updateBlogAction } from "@/actions/blogs-actions";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,18 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormFieldWrapper } from "../../../../components/input-form-wrapper";
 import { UploadButton } from "@/utils/uploadthing";
-
-const RichEditor = dynamic(
-	() => import("@/components/editor").then((mod) => mod.RichEditor),
-	{
-		ssr: false,
-		loading: () => (
-			<div className='h-[450px] w-full bg-muted animate-pulse rounded-xl border border-dashed flex items-center justify-center text-muted-foreground'>
-				Loading Editor...
-			</div>
-		),
-	},
-);
+import { RichTextEditor } from "@/components/tiptap/rich-text-editor";
 
 interface BlogFormProps {
 	initialData?: any;
@@ -220,7 +206,7 @@ export function BlogForm({ initialData, onSuccess }: BlogFormProps) {
 							name='content'
 							label='Article Body'>
 							{(field) => (
-								<RichEditor value={field.value} onChange={field.onChange} />
+								<RichTextEditor value={field.value} onChange={field.onChange} />
 							)}
 						</FormFieldWrapper>
 					</TabsContent>

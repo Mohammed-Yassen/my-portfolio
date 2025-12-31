@@ -15,7 +15,7 @@ import {
 	LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FullAboutSection } from "@/type";
+import { FullAboutSection } from "@/types";
 
 // Expanded Icon Map to support dynamic selection from IconPicker
 const ICON_MAP: Record<string, LucideIcon> = {

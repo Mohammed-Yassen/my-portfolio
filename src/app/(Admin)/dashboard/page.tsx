@@ -1,5 +1,5 @@
 /** @format */
-import { db } from "@/lib/db/db";
+import { db } from "@/lib/db";
 import {
 	Briefcase,
 	Mail,

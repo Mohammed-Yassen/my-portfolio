@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FolderOpen, Pencil, Plus, Trash2 } from "lucide-react";
 
-import { deleteProject } from "@/app/actions/projects-action";
+import { deleteProject } from "@/actions/projects-action";
 import ProjectForm from "./project-form";
 
 export function ProjectsDashboard({

@@ -1,5 +1,5 @@
 /** @format */
-import { getBlogs } from "@/app/data/blogs";
+import { getBlogs } from "@/data/blogs";
 import { BlogCard } from "@/components/blog-card";
 import { MotionViewport } from "@/components/motion-viewport";
 

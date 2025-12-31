@@ -2,7 +2,7 @@
 
 "use client";
 
-import { ExperienceWithRelations } from "@/type";
+import { ExperienceWithRelations } from "@/types";
 import { Education } from "@prisma/client";
 import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Calendar } from "lucide-react";

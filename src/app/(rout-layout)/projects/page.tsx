@@ -1,8 +1,8 @@
 /** @format */
 
-import { getFeaturedProjects } from "@/app/data";
+import { getFeaturedProjects } from "@/data";
 import { ProjectsListClient } from "./projects-client";
-import { Project } from "@/type/projects-type";
+import { Project } from "@/types/projects-type";
 import { Suspense } from "react";
 import { ProjectsSkeleton } from "@/components/sections/skeleton";
 

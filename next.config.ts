@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
 				port: "",
 				pathname: "/f/**",
 			},
+			{
+				protocol: "https",
+				hostname: "lh3.googleusercontent.com",
+				port: "",
+				pathname: "/**",
+			},
+			// If you plan to use GitHub auth later, add this too:
+			{
+				protocol: "https",
+				hostname: "avatars.githubusercontent.com",
+				port: "",
+				pathname: "/**",
+			},
 		],
 	},
 };

@@ -26,7 +26,7 @@ import {
 } from "@/lib/validations";
 
 import { Certification } from "@prisma/client";
-import { createCertification, updateCertification } from "@/app/actions";
+import { createCertification, updateCertification } from "@/actions";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/utils/uploadthing";
 

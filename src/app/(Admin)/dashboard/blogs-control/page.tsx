@@ -1,6 +1,6 @@
 /** @format */
 import { Suspense } from "react";
-import { db } from "@/lib/db/db";
+import { db } from "@/lib/db";
 import { BlogsDashboard } from "./blogs-contol";
 import { DashboardSkeleton } from "@/components/dashboard/dash-skeleton";
 

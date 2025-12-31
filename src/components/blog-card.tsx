@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { MotionViewport } from "@/components/motion-viewport";
-import { BlogWithRelations } from "@/type/blogs-type";
+import { BlogWithRelations } from "@/types/blogs-type";
 
 interface BlogCardProps {
 	post: BlogWithRelations;

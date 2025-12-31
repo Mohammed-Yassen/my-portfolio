@@ -38,7 +38,7 @@ import {
 import {
 	deleteSkillCategoryAction,
 	upsertSkillCategoryAction,
-} from "@/app/actions";
+} from "@/actions";
 import { IconPicker } from "../icon-picker";
 import { FormFieldWrapper } from "@/components/input-form-wrapper";
 import { Separator } from "@radix-ui/react-dropdown-menu";

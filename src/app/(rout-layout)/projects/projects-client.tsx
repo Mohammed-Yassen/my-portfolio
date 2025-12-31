@@ -7,7 +7,7 @@ import { Search, ArrowLeft, LayoutGrid } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/project-card"; // Import here
-import { Project } from "@/type/projects-type";
+import { Project } from "@/types/projects-type";
 
 export function ProjectsListClient({
 	projectsData,

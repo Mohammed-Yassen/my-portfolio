@@ -1,44 +1,67 @@
 /** @format */
-import { SkillsSection } from "@/components/sections/skills-section";
+import { Suspense } from "react";
 import {
 	AboutLoader,
+	BlogsLoader,
 	CertificationsLoader,
 	ExperianceAndEducationLoader,
 	HeroLoader,
 	ProjectsLoader,
 	SkillsLoader,
+	TestimonialsLoader,
 } from "./loaders";
-import { ProjectsSection } from "@/components/sections/projects-section";
-import { CertificationsSection } from "@/components/sections/certification-section";
-import { BlogSection } from "@/components/sections/blog-section";
 import { ContactSectionForm } from "@/components/sections/contact-section";
-import { Footprints } from "lucide-react";
 import { Footer } from "@/components/sections/footer";
+
+import {
+	HeroSkeleton,
+	AboutSkeleton,
+	SkillsSkeleton,
+	ProjectsSkeleton,
+	BlogSkeleton,
+	CertificationsSkeleton,
+	ExperienceEducationSkeleton,
+	TestimonialsSkeleton,
+} from "@/components/sections/skeleton";
+import { HomeClientWrapper } from "./home-client-wrapper";
 
 export default function Home() {
 	return (
-		<main className='relative bg-background text-foreground min-h-screen selection:bg-primary/30 pb-16 md:pb-24 '>
-			{/* Global background effects */}
-			<div
-				className='absolute inset-0 z-0 opacity-[0.05] space-y-24'
-				style={{
-					backgroundImage: `linear-gradient(to right, #808080 1px, transparent 1px), linear-gradient(to bottom, #808080 1px, transparent 1px)`,
-					backgroundSize: "3rem 3rem",
-				}}
-			/>
-			<HeroLoader />
-			<AboutLoader />
-			{/* SkillsLoader */}
-			<SkillsLoader />
-			<ProjectsLoader />
-			{/* <ProjectsSection /> */}
-			<ExperianceAndEducationLoader />
+		// The Client Wrapper handles the background and mounting logic
+		<HomeClientWrapper>
+			<Suspense fallback={<HeroSkeleton />}>
+				<HeroLoader />
+			</Suspense>
 
-			{/*  */}
-			<CertificationsLoader />
-			<BlogSection />
+			<Suspense fallback={<AboutSkeleton />}>
+				<AboutLoader />
+			</Suspense>
+
+			<Suspense fallback={<SkillsSkeleton />}>
+				<SkillsLoader />
+			</Suspense>
+
+			<Suspense fallback={<ProjectsSkeleton />}>
+				<ProjectsLoader />
+			</Suspense>
+			<Suspense fallback={<TestimonialsSkeleton />}>
+				<TestimonialsLoader />
+			</Suspense>
+
+			<Suspense fallback={<ExperienceEducationSkeleton />}>
+				<ExperianceAndEducationLoader />
+			</Suspense>
+
+			<Suspense fallback={<CertificationsSkeleton />}>
+				<CertificationsLoader />
+			</Suspense>
+
+			<Suspense fallback={<BlogSkeleton />}>
+				<BlogsLoader />
+			</Suspense>
+
 			<ContactSectionForm />
 			<Footer />
-		</main>
+		</HomeClientWrapper>
 	);
 }

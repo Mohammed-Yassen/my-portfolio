@@ -116,38 +116,30 @@ section {
   scroll-margin-top: 5rem;
 }
 /* Styling for Tiptap Code Blocks */
-.ProseMirror pre {
-  background: #09090b;
-  /* zinc-950 */
-  color: #e4e4e7;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  margin: 1.5rem 0;
-  border: 1px solid #27272a;
+/* tiptap.css */
+/* tiptap.css */
+
+/* The container for syntax-highlighted code */
+/* Better Code Block Visibility */
+.prose pre {
+  padding: 1.5rem !important;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  color: #e6edf3 !important;
+  /* Force a high-contrast off-white */
   font-family: 'JetBrains Mono', monospace;
-}
-
-.ProseMirror pre code {
-  background: none;
-  color: inherit;
   font-size: 0.9rem;
-  padding: 0;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
-/* Syntax Highlighting Colors (Lowlight) */
-.hljs-keyword {
-  color: #c678dd;
-}
-
-.hljs-string {
-  color: #98c379;
-}
-
-.hljs-function {
-  color: #61afef;
-}
-
-.hljs-comment {
-  color: #5c6370;
-  /* italic; */
+/* Inline code highlight */
+.prose :not(pre)>code {
+  background: rgba(var(--primary), 0.1) !important;
+  color: hsl(var(--primary)) !important;
+  padding: 0.2rem 0.4rem !important;
+  border-radius: 0.4rem;
+  font-size: 0.85em !important;
 }

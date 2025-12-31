@@ -1,9 +1,9 @@
 /** @format */
 
-import { getProjectById } from "@/app/data";
+import { getProjectById } from "@/data";
 import { notFound } from "next/navigation";
 import { SingleProjectClient } from "./single-project-client";
-import { Project } from "@/type/projects-type";
+import { Project } from "@/types/projects-type";
 
 // Next.js 15: params must be treated as a Promise
 export default async function ProjectPage({

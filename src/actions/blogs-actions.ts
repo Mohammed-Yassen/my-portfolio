@@ -1,7 +1,7 @@
 /** @format */
 "use server";
 
-import { db } from "@/lib/db/db";
+import { db } from "@/lib/db";
 import { blogSchema, BlogFormValues } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 

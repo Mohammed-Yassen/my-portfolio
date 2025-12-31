@@ -29,7 +29,7 @@ import {
 	MultiSelectTrigger,
 	MultiSelectValue,
 } from "@/components/ui/multi-select"; // Assuming a Shadcn multi-select component
-import { createExperienceAction } from "@/app/actions";
+import { createExperienceAction } from "@/actions";
 
 interface ExperienceFieldsProps {
 	initialData?: any;

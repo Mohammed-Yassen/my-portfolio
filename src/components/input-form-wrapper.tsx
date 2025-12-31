@@ -18,6 +18,7 @@ interface FormFieldWrapperProps<T extends FieldValues, N extends FieldPath<T>> {
 	control: Control<T>;
 	name: N;
 	label?: string;
+	disabled?: boolean;
 	children: (field: ControllerRenderProps<T, N>) => React.ReactNode;
 }
 
@@ -29,6 +30,7 @@ export const FormFieldWrapper = <
 	name,
 	label,
 	children,
+	disabled,
 }: FormFieldWrapperProps<T, N>) => (
 	<FormField
 		control={control}
